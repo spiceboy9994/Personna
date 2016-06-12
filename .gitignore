@@ -1,2 +1,6 @@
 
 personna/node_modules
+
+*.log
+
+personna/npm-debug.log
