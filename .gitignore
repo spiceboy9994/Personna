@@ -4,3 +4,5 @@ personna/node_modules
 *.log
 
 personna/npm-debug.log
+
+personna/data/journal

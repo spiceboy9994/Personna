@@ -4,11 +4,38 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+// const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
+const MongoClient = require('mongodb').MongoClient;
 var index = require('./controllers/index');
 var users = require('./controllers/users');
+var bodySection = require('./controllers/bodySection');
+var  personnaDb;
+//DB
+//var mongo = require('mongodb');
+
 
 var app = express();
+
+
+MongoClient.connect('mongodb://localhost:27017/personna', function(err, db) {
+  if (err) {
+    throw err;
+  } else {
+    console.log('all good');
+    app.locals.db = db;
+    personnaDb = db
+    // database = db;//new PersonnaDb("http://localhost:27017");
+    // console.log(personnaDb);
+    app.use(function(req, res, next) {
+
+      console.log('---->midle');
+      req.db = personnaDb;
+      
+      console.log(req.db);
+    });
+  }
+});
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,13 +51,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
-
+app.use('/bodySection', bodySection);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
+
+
 
 // error handlers
 
@@ -55,6 +84,8 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+
 
 
 module.exports = app;

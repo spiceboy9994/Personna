@@ -1,5 +1,4 @@
 var express = require('express');
-var user = require('./users');
 var RoutineModel = require('../models/routineModel').RoutineModel;
 
 //import { TrackableModel } from './trackableModel';
