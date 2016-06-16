@@ -1,30 +1,27 @@
 "use strict"
-// const _bsConnKey = Symbol();
+const _bsConnKey = Symbol();
 const Q = require('q');
 // const bsCollName = 'BodySections';
 // const bsCollFriendlyName = 'Body Section';
 const PersonnaDb = require('../dao/personnaDb').PersonnaDb;
 
 class BodySectionService {
-  constructor() {
+  constructor(dbConn) {
+    // console.log('---> constructor');
+    // console.log(dbConn);
+    this[_bsConnKey] = dbConn;
+    // console.log(this[_bsConnKey]);
   }
 
-  static addBodySection(section) {
-    var deferred = Q.defer();
+  addBodySection(section) {
+    // var deferred = Q.defer();
+    console.log('---> in method');
+    console.log(this[_bsConnKey]);
+    // const db = new PersonnaDb();
     
-    const db = new PersonnaDb();
-    db.openConnection().then((conn) => {
-      console.log('In controller');
+      console.log('-> after method');
       console.log(section);
-      deferred.resolve(section);
-    })
-    .fail((err) => {
-      console.log(err);
-      deferred.reject(err);
-    })
-    .done();
-
-    return deferred.promise;
+     
     return section;
   }
 }
