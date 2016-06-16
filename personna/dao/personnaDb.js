@@ -35,23 +35,24 @@ class PersonnaDb {
 
   openConnection() {
     let deferred = Q.defer();
-    console.log('--> DB connection call');
-    console.log(this._connInstance);
-    if (this._connInstance) {
+    // console.log('--> DB connection call');
+    // console.log(this._connInstance);
+    if (this[_connKey]) {
+    // if (this._connInstance) {
       console.log('---> not need to create instance');
       deferred.resolve(this[_connInfoKey]);
     } else {
-      let $this = this._connInstance;
+      let $this = this;
       const mongoObject = new Db('your-db', new Server(this[_connInfoKey].host, this[_connInfoKey].port, { auto_reconnect: true }));
       mongoObject.open(function(error, databaseConnection) {
         if (error) throw new Error(error);
-        // console.log('---> Succesfully open connection');
+          console.log('---> Succesfully CREATED connection');
         // // console.log(databaseConnection);
         // console.log($this);
         //$this[_connKey] = databaseConnection;
-        $this = databaseConnection;
-        console.log('--> assigned symbol')
-        console.log($this);
+        $this[_connKey] = databaseConnection;
+        // console.log('--> assigned symbol')
+        // console.log($this._connInstance);
         deferred.resolve($this);
       });
     }

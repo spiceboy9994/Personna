@@ -14,14 +14,17 @@ router.post('/', function(req, res, next) {
    // var x = new BodySectionService();
    // console.log(x);
   // console.log(app.locals.db);
-  // console.log(req.db);
-  // const bodyService = new BodySectionService();
-  BodySectionService.addBodySection(bodySection).then((result) => {
-    res.json(bodySection);
-  })
-  .fail((err) => {
-    res.json(err);
-  })
+  // console.log('---> router post');
+  // console.log(req.app.locals.dbConnection);
+  const bodyService = new BodySectionService(req.app.locals.dbConnection);
+  var result = bodyService.addBodySection(bodySection);
+  res.json(result);
+  // var result = bodyService.addBodySection(bodySection).then((result) => {
+  //   res.json(bodySection);
+  // })
+  // .fail((err) => {
+  //   res.json(err);
+  // })
 });
 
 module.exports = router;

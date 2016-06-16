@@ -25,22 +25,33 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use(function(req, res, next) {
+  dbConnection.openConnection().then((conn) => {
+    req.app.locals.dbConnection = dbConnection;
+    // console.log('---Middleware');
+    // console.log(req.app.locals);
+  })
+  .fail((err) => {
+    console.log(err)
+  })
+  .done(()=> {
+    next();
+  })
+  
+  
+});
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/bodySection', bodySection);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
-
-app.use(function(req, res, next) {
-  //req.locals.dbConnection = dbConnection;
-  console.log('---Middleware');
-  console.log(req.locals);
-});
-
 
 
 // error handlers
