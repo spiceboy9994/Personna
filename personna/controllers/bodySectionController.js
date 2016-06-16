@@ -11,11 +11,12 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   const bodySection = { name: req.body.name };
-  console.log(app);
-  console.log(app.locals.db);
-  console.log(req.db);
-  const bodyService = new BodySectionService(app.locals.db);
-  bodySectionService.addBodySection(bodySection).then((result) => {
+   // var x = new BodySectionService();
+   // console.log(x);
+  // console.log(app.locals.db);
+  // console.log(req.db);
+  // const bodyService = new BodySectionService();
+  BodySectionService.addBodySection(bodySection).then((result) => {
     res.json(bodySection);
   })
   .fail((err) => {

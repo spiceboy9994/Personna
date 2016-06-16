@@ -1,24 +1,32 @@
 "use strict"
-const _bsConnKey = Symbol();
+// const _bsConnKey = Symbol();
 const Q = require('q');
-const bsCollName = 'BodySections';
-const bsCollFriendlyName = 'Body Section';
-const PersonnaDao = require('../dao/personnaDao').PersonnaDao;
+// const bsCollName = 'BodySections';
+// const bsCollFriendlyName = 'Body Section';
+const PersonnaDb = require('../dao/personnaDb').PersonnaDb;
 
 class BodySectionService {
-  constructor(db) {
-    this[_bsConnKey] = new PersonnaDao(db, bsCollName, bsCollFriendlyName);
+  constructor() {
   }
 
-  addBodySection(section) {
+  static addBodySection(section) {
     var deferred = Q.defer();
-    this[_bsConnKey].addItem(section, (result) => {
-      if (result.getSuccess()) {
-        deferred.resolve(result);
-      } else {
-        deferred.reject(result);
-      }
-    });
+    
+    const db = new PersonnaDb();
+    db.openConnection().then((conn) => {
+      console.log('In controller');
+      console.log(section);
+      deferred.resolve(section);
+    })
+    .fail((err) => {
+      console.log(err);
+      deferred.reject(err);
+    })
+    .done();
+
     return deferred.promise;
+    return section;
   }
 }
+
+module.exports.BodySectionService = BodySectionService;

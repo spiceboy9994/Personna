@@ -4,37 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
-const MongoClient = require('mongodb').MongoClient;
 var index = require('./controllers/index');
 var users = require('./controllers/users');
-var bodySection = require('./controllers/bodySection');
-var  personnaDb;
-//DB
-//var mongo = require('mongodb');
-
+var bodySection = require('./controllers/bodySectionController');
+const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
+const dbConnection = new PersonnaDb();
 
 var app = express();
-
-
-MongoClient.connect('mongodb://localhost:27017/personna', function(err, db) {
-  if (err) {
-    throw err;
-  } else {
-    console.log('all good');
-    app.locals.db = db;
-    personnaDb = db
-    // database = db;//new PersonnaDb("http://localhost:27017");
-    // console.log(personnaDb);
-    app.use(function(req, res, next) {
-
-      console.log('---->midle');
-      req.db = personnaDb;
-      
-      console.log(req.db);
-    });
-  }
-});
 
 
 // view engine setup
@@ -57,6 +33,12 @@ app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
+});
+
+app.use(function(req, res, next) {
+  //req.locals.dbConnection = dbConnection;
+  console.log('---Middleware');
+  console.log(req.locals);
 });
 
 
