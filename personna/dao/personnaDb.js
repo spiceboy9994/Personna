@@ -1,17 +1,27 @@
 "use strict"
-const url        = require('url'),
-      parsedUrl  = url.parse(process.env.CONNECTION_STRING || 'mongodb://localhost:27017/personna'),
-      Db         = require('mongodb').Db,
-      Server     = require('mongodb').Server,
-      Connection = require('mongodb').Connection,
-      Q          = require("q");
+// Imports
+const url           = require('url'),
+      connectionUrl = process.env.CONNECTION_STRING || 'mongodb://localhost:27017/personna',
+      parsedUrl     = url.parse(connectionUrl),
+      Db            = require('mongodb').Db,
+      Server        = require('mongodb').Server,
+      Connection    = require('mongodb').Connection,
+      Q             = require("q"),
+      mongoose      = require("mongoose");
 
+// Symbol Keys
+const _connKey = Symbol();
+const _connInfoKey = Symbol();
+const _monConnKey = Symbol();
 
-
-let _connKey = Symbol();
-let _connInfoKey = Symbol();
-
+/**
+ * This class represents the DB Connection
+ */
 class PersonnaDb {
+  /**
+   * Class Constructor
+   * @return {[type]} [description]
+   */
   constructor() {
     let mongoObject = null;
     this[_connInfoKey] = {
@@ -22,23 +32,15 @@ class PersonnaDb {
       password: parsedUrl.auth ? parsedUrl.auth.split(':')[1] : null
     };
     this._connInstance = null;
-    // console.log('--> DB connection call');
-    // mongoObject = new Db('your-db', new Server("127.0.0.1", Connection.DEFAULT_PORT, { auto_reconnect: true }));
-    // db.open(function(error, databaseConnection) {
-    //   if (error) throw new Error(error);
-    //   console.log('---> Succesfully open connection');
-    //   this[_connInfoKey] = databaseConnection;
-    //   console.log(this[_connInfoKey]);
-    //   callback(this[_connInfoKey]);
-    // });
   }
 
+  /**
+   * Opens the DB connection using regular mongo db access
+   * @return {[type]} [description]
+   */
   openConnection() {
     let deferred = Q.defer();
-    // console.log('--> DB connection call');
-    // console.log(this._connInstance);
     if (this[_connKey]) {
-    // if (this._connInstance) {
       console.log('---> not need to create instance');
       deferred.resolve(this[_connInfoKey]);
     } else {
@@ -46,18 +48,49 @@ class PersonnaDb {
       const mongoObject = new Db('your-db', new Server(this[_connInfoKey].host, this[_connInfoKey].port, { auto_reconnect: true }));
       mongoObject.open(function(error, databaseConnection) {
         if (error) throw new Error(error);
-          console.log('---> Succesfully CREATED connection');
-        // // console.log(databaseConnection);
-        // console.log($this);
-        //$this[_connKey] = databaseConnection;
+        console.log('---> Succesfully CREATED connection');
         $this[_connKey] = databaseConnection;
-        // console.log('--> assigned symbol')
-        // console.log($this._connInstance);
         deferred.resolve($this);
       });
     }
     return deferred.promise;
   } 
+
+  /**
+   * Opens a Mongo db connection
+   * @return {[type]} [description]
+   */
+  openMongooseConnection() {
+    mongoose.connect(connectionUrl); 
+
+    // CONNECTION EVENTS
+    // When successfully connected
+    mongoose.connection.on('connected', function () {  
+      console.log('Mongoose default connection open to ' + parsedUrl);
+    }); 
+
+    // If the connection throws an error
+    mongoose.connection.on('error',function (err) {
+      console.log('Mongoose default connection error: ' + err);
+    });
+
+    // When the connection is disconnected
+    mongoose.connection.on('disconnected', function () {
+      console.log('Mongoose default connection disconnected');
+    });
+
+    // If the Node process ends, close the Mongoose connection
+    process.on('SIGINT', function() {
+      mongoose.connection.close(function () {
+        console.log('Mongoose default connection disconnected through app termination');
+        process.exit(0);
+      });
+    });
+    // BRING IN YOUR SCHEMAS & MODELS
+    require('../models/data/bodySectionModel');
+  }
+
+  
 }
 
 module.exports.PersonnaDb = PersonnaDb;

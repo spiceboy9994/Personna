@@ -24,23 +24,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+dbConnection.openMongooseConnection();
 
 
-app.use(function(req, res, next) {
-  dbConnection.openConnection().then((conn) => {
-    req.app.locals.dbConnection = dbConnection;
-    // console.log('---Middleware');
-    // console.log(req.app.locals);
-  })
-  .fail((err) => {
-    console.log(err)
-  })
-  .done(()=> {
-    next();
-  })
+// app.use(function(req, res, next) {
+//   dbConnection.openConnection().then((conn) => {
+//     req.app.locals.dbConnection = dbConnection;
+//     // console.log('---Middleware');
+//     // console.log(req.app.locals);
+//   })
+//   .fail((err) => {
+//     console.log(err)
+//   })
+//   .done(()=> {
+//     next();
+//   })
   
   
-});
+// });
 
 app.use('/', index);
 app.use('/users', users);

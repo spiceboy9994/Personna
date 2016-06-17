@@ -1,28 +1,39 @@
 "use strict"
+// Imports
+const Q                 = require('q'),
+      BodySectionModel  = require('../models/data/bodySectionModel').BodySectionModel,
+      ResultModel       = require('../models/result/resultModel').ResultModel,
+      strings           = require('../models/strings/crudStrings').CrudStrings;
+
+// Symbols
 const _bsConnKey = Symbol();
-const Q = require('q');
-// const bsCollName = 'BodySections';
-// const bsCollFriendlyName = 'Body Section';
-const PersonnaDb = require('../dao/personnaDb').PersonnaDb;
 
+/**
+ * Controls DB operations agaisnt the DB
+ */
 class BodySectionService {
-  constructor(dbConn) {
-    // console.log('---> constructor');
-    // console.log(dbConn);
-    this[_bsConnKey] = dbConn;
-    // console.log(this[_bsConnKey]);
-  }
-
-  addBodySection(section) {
-    // var deferred = Q.defer();
-    console.log('---> in method');
-    console.log(this[_bsConnKey]);
-    // const db = new PersonnaDb();
-    
-      console.log('-> after method');
-      console.log(section);
-     
-    return section;
+  
+  /**
+   * Adds a Body Section to the DB
+   * @param {object} section Body Section
+   */
+  static addBodySection(section) {
+    let deferred = Q.defer();
+    let bodySectionInstance = new BodySectionModel();
+    let bodySection = bodySectionInstance.getModel();
+    bodySection.Name = section.name;
+    bodySection.BodySectionId = section.id;
+    bodySection.save((err) => {
+      let resultModel = null;
+      if (err) {
+        resultModel = new ResultModel(err, false, strings.Messages(bodySectionInstance.getSchemaName()).COULD_NOT_SAVE);
+        deferred.reject(resultModel);
+      } else {
+        resultModel = new ResultModel(bodySection, true, strings.Messages(bodySectionInstance.getSchemaName()).ADDED);
+        deferred.resolve(resultModel);
+      }
+    }); 
+    return deferred.promise;
   }
 }
 
