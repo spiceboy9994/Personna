@@ -8,7 +8,6 @@ class ResultModel {
       this[_resultKey] = item;
       this[_resultSuccesKey] = success;
       this[_resultMessageKey] = message;
-      console.log('---> ok results');
     //}
   }
 
@@ -32,7 +31,7 @@ class ResultModel {
   // setMessage() {
   //   this[_resultMessageKey] = value;
   // }
-  
+
   toJSON() {
     return {
       item:     this[_resultKey],
