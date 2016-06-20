@@ -1,28 +1,24 @@
 "use strict"
 const express             = require('express'),
       router              = express.Router(),
-      BodySectionService  = require('../services/bodySectionService').BodySectionService,
-      bodySectionProxy    = new BodySectionService();
+      EquipmentService    = require('../services/equipmentService').EquipmentService,
+      equipmentproxy      = new EquipmentService();
 
-
-/* GET home page. */
-// router.get('/', function(req, res, next) {
-//   res.json({success: true});
-// });
 
 /**
- * Adds a body Section
+ * Adds an  Equipment piece
  * @param  {[type]} req   [description]
  * @param  {[type]} res   [description]
  * @param  {Object} next) {             let section [description]
  * @return {[type]}       [description]
  */
 router.post('/', function(req, res, next) {
-  let section = {
+  let equipment = {
     name: req.body.name,
-    id: req.body.id
+    id: req.body.id,
+    description: req.body.description,
   };
-  var result = bodySectionProxy.addBodySection(section).then((result) => {
+  var result = equipmentproxy.addEquipment(equipment).then((result) => {
     res.json(result);
   })
   .fail((err) => {
@@ -38,7 +34,7 @@ router.post('/', function(req, res, next) {
  * @return {[type]}         [description]
  */
 router.get('/', function(req, res, next) {
-  var result = bodySectionProxy.getBodySections({}).then((result) => {
+  var result = equipmentproxy.getEquipments({}).then((result) => {
     res.json(result);
   })
   .fail((err) => {
