@@ -10,9 +10,10 @@ var bodySection = require('./controllers/bodySectionController');
 var equipment = require('./controllers/equipmentController');
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
+const PersonnaLogger = require('./util/logger').PersonnaLogger;
 
 var app = express();
-
+var personnaLogger = new PersonnaLogger();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,24 +26,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// Open DB Connection
 dbConnection.openMongooseConnection();
 
-
-// app.use(function(req, res, next) {
-//   dbConnection.openConnection().then((conn) => {
-//     req.app.locals.dbConnection = dbConnection;
-//     // console.log('---Middleware');
-//     // console.log(req.app.locals);
-//   })
-//   .fail((err) => {
-//     console.log(err)
-//   })
-//   .done(()=> {
-//     next();
-//   })
-  
-  
-// });
+// set the common logger
+app.use(function(req, res, next) {
+  req.app.locals.personaLogger = personnaLogger;
+  next();
+})
 
 app.use('/', index);
 app.use('/users', users);
@@ -63,7 +54,13 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
+    // console.log('Error 1');
     res.status(err.status || 500);
+    // const perLogger = req.app.locals.personaLogger;
+    // perLogger.logError(err);
+    if (res.headersSent) {
+      return next(err);
+    }
     res.render('error', {
       message: err.message,
       error: err
@@ -71,10 +68,18 @@ if (app.get('env') === 'development') {
   });
 }
 
+
+
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+  // console.log('Error 2'); 
   res.status(err.status || 500);
+  const perLogger = req.app.locals.personaLogger;
+  perLogger.logError(err);
+  if (res.headersSent) {
+    return next(err);
+  }
   res.render('error', {
     message: err.message,
     error: {}
