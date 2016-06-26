@@ -8,6 +8,7 @@ var index = require('./controllers/index');
 var users = require('./controllers/users');
 var bodySection = require('./controllers/bodySectionController');
 var equipment = require('./controllers/equipmentController');
+var exerciseType = require('./controllers/exerciseTypeController');
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
 const PersonnaLogger = require('./util/logger').PersonnaLogger;
@@ -39,6 +40,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/bodySection', bodySection);
 app.use('/equipment', equipment);
+app.use('/exercisetype', exerciseType);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
