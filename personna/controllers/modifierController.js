@@ -1,8 +1,9 @@
+// TODO Best approach for classes using controllers and services
 "use strict"
 const express             = require('express'),
-      router              = express.Router(),
-      ModifierService    = require('../services/modifierService').ModifierService,
-      modifierProxy      = new ModifierService();
+      router              = express.Router();
+      // ModifierService    = require('../services/modifierService').ModifierService;
+      // modifierProxy      = new ModifierService();
 
 
 /**
@@ -13,6 +14,8 @@ const express             = require('express'),
  * @return {[type]}       [description]
  */
 router.post('/', function(req, res, next) {
+  const modifierProxy = req.app.get("services").Modifier;
+  const logger = req.app.get("customLogger");
   let equipment = {
     name: req.body.name,
     id: req.body.id,
@@ -22,6 +25,7 @@ router.post('/', function(req, res, next) {
     res.json(result);
   })
   .fail((err) => {
+    logger.logError(err);
     res.json(err);
   })
 });
@@ -34,10 +38,13 @@ router.post('/', function(req, res, next) {
  * @return {[type]}         [description]
  */
 router.get('/', function(req, res, next) {
+  const modifierProxy = req.app.get("services").Modifier;
+  const logger = req.app.get("customLogger");
   var result = modifierProxy.getModifiers({}).then((result) => {
     res.json(result);
   })
   .fail((err) => {
+    logger.logError(err);
     res.json(err);
   })
 });

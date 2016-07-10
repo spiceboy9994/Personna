@@ -1,8 +1,6 @@
 "use strict"
 const express               = require('express'),
-      router                = express.Router(),
-      ExerciseTypeService   = require('../services/exerciseTypeService').ExerciseTypeService,
-      exerciseTypeProxy     = new ExerciseTypeService();
+      router                = express.Router();
 /**
  * Adds a Exercise Type
  * @param  {[type]} req   [description]
@@ -11,6 +9,8 @@ const express               = require('express'),
  * @return {[type]}       [description]
  */
 router.post('/', function(req, res, next) {
+  const exerciseTypeProxy = req.app.get("services").ExerciseType;
+  const logger = req.app.get("customLogger");
   let eType = {
     name: req.body.name,
     description: req.body.description,
@@ -20,7 +20,8 @@ router.post('/', function(req, res, next) {
     res.json(result);
   })
   .fail((err) => {
-    res.json(err);
+    logger.logError(err);
+    res.json(err.message);
   })
 });
 
@@ -32,11 +33,14 @@ router.post('/', function(req, res, next) {
  * @return {[type]}         [description]
  */
 router.get('/', function(req, res, next) {
+  const exerciseTypeProxy = req.app.get("services").ExerciseType;
+  const logger = req.app.get("customLogger");
   var result = exerciseTypeProxy.getExerciseTypes({}).then((result) => {
     res.json(result);
   })
   .fail((err) => {
-    res.json(err);
+    logger.logError(err);
+    res.json(err.message);
   })
 });
 module.exports = router;

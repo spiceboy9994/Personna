@@ -1,15 +1,6 @@
 "use strict"
 const express             = require('express'),
-      router              = express.Router(),
-      BodySectionService  = require('../services/bodySectionService').BodySectionService,
-      bodySectionProxy    = new BodySectionService();
-
-
-/* GET home page. */
-// router.get('/', function(req, res, next) {
-//   res.json({success: true});
-// });
-
+      router              = express.Router();
 /**
  * Adds a body Section
  * @param  {[type]} req   [description]
@@ -18,6 +9,8 @@ const express             = require('express'),
  * @return {[type]}       [description]
  */
 router.post('/', function(req, res, next) {
+  const bodySectionProxy = req.app.get("services").BodySection;
+  const logger = req.app.get("customLogger");
   let section = {
     name: req.body.name,
     id: req.body.id
@@ -26,7 +19,8 @@ router.post('/', function(req, res, next) {
     res.json(result);
   })
   .fail((err) => {
-    res.json(err);
+    logger.logError(err);
+    res.json(err.message);
   })
 });
 
@@ -38,11 +32,16 @@ router.post('/', function(req, res, next) {
  * @return {[type]}         [description]
  */
 router.get('/', function(req, res, next) {
+  
+  const bodySectionProxy = req.app.get("services").BodySection;
+  const logger = req.app.get("customLogger");
   var result = bodySectionProxy.getBodySections({}).then((result) => {
     res.json(result);
   })
   .fail((err) => {
-    res.json(err);
+    logger.logError(err);
+    res.json(err.message);
   })
 });
+  
 module.exports = router;

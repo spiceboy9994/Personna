@@ -1,8 +1,8 @@
 "use strict"
 const express             = require('express'),
-      router              = express.Router(),
-      EquipmentService    = require('../services/equipmentService').EquipmentService,
-      equipmentproxy      = new EquipmentService();
+      router              = express.Router();
+      // EquipmentService    = require('../services/equipmentService').EquipmentService,
+      // equipmentproxy      = new EquipmentService();
 
 
 /**
@@ -13,6 +13,8 @@ const express             = require('express'),
  * @return {[type]}       [description]
  */
 router.post('/', function(req, res, next) {
+  const equipmentproxy = req.app.get("services").Equipment;
+  const logger = req.app.get("customLogger");
   let equipment = {
     name: req.body.name,
     id: req.body.id,
@@ -22,7 +24,8 @@ router.post('/', function(req, res, next) {
     res.json(result);
   })
   .fail((err) => {
-    res.json(err);
+    logger.logError(err);
+    res.json(err.message);
   })
 });
 
@@ -34,11 +37,14 @@ router.post('/', function(req, res, next) {
  * @return {[type]}         [description]
  */
 router.get('/', function(req, res, next) {
+  const equipmentproxy = req.app.get("services").Equipment;
+  const logger = req.app.get("customLogger");
   var result = equipmentproxy.getEquipments({}).then((result) => {
     res.json(result);
   })
   .fail((err) => {
-    res.json(err);
+    logger.logError(err);
+    res.json(err.message);
   })
 });
 module.exports = router;
