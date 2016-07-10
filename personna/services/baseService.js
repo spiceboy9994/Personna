@@ -12,7 +12,7 @@ class BaseService {
       return deferred.reject(resultModel);
     } else {
       resultModel = new ResultModel(successData, true, successMessage);
-      console.log(resultModel.toJSON());
+      // console.log(resultModel.toJSON());
       return deferred.resolve(resultModel);
     }
   }

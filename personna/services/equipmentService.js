@@ -2,7 +2,6 @@
 // Imports
 const Q                 = require('q'),
       EquipmentModel    = require('../models/data/equipmentModel').EquipmentModel,
-      // ResultModel       = require('../models/result/resultModel').ResultModel,
       BaseService       = require('./baseService').BaseService,
       strings           = require('../models/strings/crudStrings').CrudStrings;
 
@@ -13,8 +12,8 @@ const _esInstance =  Symbol();
  */
 class EquipmentService {
 
-  constructor() {
-    this[_esInstance] = new EquipmentModel();
+  constructor(db) {
+    this[_esInstance] = db.dataModels().Equipment;
   }
    /**
    * Adds an Equipment  to the DB
