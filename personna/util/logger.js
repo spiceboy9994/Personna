@@ -65,7 +65,9 @@ class PersonnaLogger {
    * @return {[type]}         [description]
    */
   logError(message) {
+    // console.log('--befor log')
     this[_loggerKey].error(message);
+    // console.log('--after log')
   }
 }
 

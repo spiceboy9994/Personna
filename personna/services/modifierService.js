@@ -1,20 +1,21 @@
 "use strict"
 // Imports
 const Q                 = require('q'),
-      ModifierModel    = require('../models/data/modifierModel').ModifierModel,
+      // ModifierModel    = require('../models/data/modifierModel').ModifierModel,
       // ResultModel       = require('../models/result/resultModel').ResultModel,
+      mongoose          = require('mongoose'),
       BaseService       = require('./baseService').BaseService,
       strings           = require('../models/strings/crudStrings').CrudStrings;
 
 const _msInstance =  Symbol();
-"use strict"
+
 /**
  * Controls Modifiers DB operations agaisnt the DB
  */
 class ModifierService {
-
-  constructor() {
-    this[_msInstance] = new ModifierModel();
+// TODO Best approach for classes using controllers and services
+  constructor(db) {
+    this[_msInstance] =  db.dataModels().Modifier;
   }
    /**
    * Adds an Modifier  to the DB
@@ -43,12 +44,31 @@ class ModifierService {
     let deferred = Q.defer();
     let modifierInstance = this[_msInstance];
     let modifier = modifierInstance.getModelList();
+    console.log(query);
     modifier.find(query, (err, modifiers) => {
       const successMessage = '';
+      // console.log('--Find');
+      // console.log(modifiers);
       const errorMessage = strings.Messages(modifierInstance.getSchemaName()).COULD_NOT_GET;
       BaseService.prepareResult(deferred, successMessage, modifiers, errorMessage, err);
     });
     return deferred.promise;
+  }
+
+  getByMultiplesIds(ids) {
+    let idArray = [];
+    ids.forEach((id) => {
+      idArray.push(mongoose.Types.ObjectId(id))
+    });
+
+    let query = {
+      '_id': {
+        $in: idArray
+      }
+    };
+
+    return this.getModifiers(query); 
+
   }
 }
 

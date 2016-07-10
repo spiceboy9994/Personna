@@ -4,11 +4,21 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+// var controllers
 var index = require('./controllers/index');
 var users = require('./controllers/users');
 var bodySection = require('./controllers/bodySectionController');
 var equipment = require('./controllers/equipmentController');
 var exerciseType = require('./controllers/exerciseTypeController');
+var modifier = require('./controllers/modifierController');
+var muscle = require('./controllers/muscleController');
+// Services
+const BodySectionService  = require('./services/bodySectionService').BodySectionService;
+const EquipmentService  = require('./services/equipmentService').EquipmentService;
+const ModifierService  = require('./services/modifierService').ModifierService;
+const MuscleService  = require('./services/muscleService').MuscleService;
+const ExerciseTypeService  = require('./services/exerciseTypeService').ExerciseTypeService;
+
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
 const PersonnaLogger = require('./util/logger').PersonnaLogger;
@@ -30,17 +40,36 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Open DB Connection
 dbConnection.openMongooseConnection();
 
+
+app.set('dbAccess', dbConnection); 
+app.set('customLogger', personnaLogger);
+//bodySection.configure(dbConnection);
+// TODO Best approach for classes using controllers and services
+const services = {
+  Modifier: new ModifierService(dbConnection),
+  BodySection: new BodySectionService(dbConnection),
+  Equipment: new EquipmentService(dbConnection),
+  ExerciseType: new ExerciseTypeService(dbConnection),
+  Muscle: new MuscleService(dbConnection),
+}
+
+console.log(dbConnection);
+// // TODO Best approach for classes using controllers and services
+app.set('services', services);
+
 // set the common logger
-app.use(function(req, res, next) {
-  req.app.locals.personaLogger = personnaLogger;
-  next();
-})
+// app.use(function(req, res, next) {
+//   req.app.locals.personaLogger = personnaLogger;
+//   next();
+// })
 
 app.use('/', index);
 app.use('/users', users);
 app.use('/bodySection', bodySection);
 app.use('/equipment', equipment);
+app.use('/modifier', modifier);
 app.use('/exercisetype', exerciseType);
+app.use('/muscle', muscle);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

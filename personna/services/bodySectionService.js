@@ -1,8 +1,6 @@
 "use strict"
 // Imports
 const Q                 = require('q'),
-      BodySectionModel  = require('../models/data/bodySectionModel').BodySectionModel,
-      // ResultModel       = require('../models/result/resultModel').ResultModel,
       BaseService       = require('./baseService').BaseService,
       strings           = require('../models/strings/crudStrings').CrudStrings;
 
@@ -13,14 +11,14 @@ const _bsInstance =  Symbol();
  */
 class BodySectionService {
   
-  constructor() {
-    this[_bsInstance] = new BodySectionModel();
+  constructor(db) {
+    this[_bsInstance] =  db.dataModels().BodySection;
   }
   /**
    * Adds a Body Section to the DB
    * @param {object} section Body Section
    */
-  static addBodySection(section) {
+  addBodySection(section) {
     let deferred = Q.defer();
     let bodySectionInstance = this[_bsInstance];
     let bodySection = bodySectionInstance.getModel();
@@ -39,7 +37,7 @@ class BodySectionService {
    * @param  {[type]} query [description]
    * @return {[type]}       [description]
    */
-  static getBodySections(query) {
+  getBodySections(query) {
     let deferred = Q.defer();
     let bodySectionInstance = this[_bsInstance];
     let bodySection = bodySectionInstance.getModelList();
@@ -47,6 +45,23 @@ class BodySectionService {
       const successMessage = '';
       const errorMessage = strings.Messages(bodySectionInstance.getSchemaName()).COULD_NOT_GET;
       BaseService.prepareResult(deferred, successMessage, sections, errorMessage, err);
+    });
+    return deferred.promise;
+  }
+
+  /**
+   * Gets a body Section by Id
+   * @param  {[type]} id [description]
+   * @return {[type]}    [description]
+   */
+  getById(id) {
+    let deferred = Q.defer();
+    let bodySectionInstance = this[_bsInstance];
+    let bodySection = bodySectionInstance.getModelList();
+    bodySection.findById(id, (err, section) => {
+      const successMessage = '';
+      const errorMessage = strings.Messages(bodySectionInstance.getSchemaName()).COULD_NOT_GET;
+      BaseService.prepareResult(deferred, successMessage, section, errorMessage, err);
     });
     return deferred.promise;
   }

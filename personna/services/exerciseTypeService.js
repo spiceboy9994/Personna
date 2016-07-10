@@ -1,7 +1,6 @@
 "use strict"
 // Imports
 const Q                     = require('q'),
-      ExerciseTypeModel     = require('../models/data/exerciseTypeModel').ExerciseTypeModel,
       BaseService       = require('./baseService').BaseService,
       strings           = require('../models/strings/crudStrings').CrudStrings;
 
@@ -12,8 +11,8 @@ const _etInstance =  Symbol();
  */
 class ExerciseTypeService {
 
-  constructor() {
-    this[_etInstance] = new ExerciseTypeModel();
+  constructor(db) {
+    this[_etInstance] = db.dataModels().ExerciseType;
   }
    /**
    * Adds an Exercise Type  to the DB

@@ -7,12 +7,16 @@ const url           = require('url'),
       Server        = require('mongodb').Server,
       Connection    = require('mongodb').Connection,
       Q             = require("q"),
-      mongoose      = require("mongoose");
+      mongoose      = require("mongoose"),
+      dao          = require('./personnaDao')
+    
+
 
 // Symbol Keys
 const _connKey = Symbol();
 const _connInfoKey = Symbol();
 const _monConnKey = Symbol();
+const _dataModelsKey = Symbol();
 
 /**
  * This class represents the DB Connection
@@ -86,8 +90,30 @@ class PersonnaDb {
         process.exit(0);
       });
     });
-    // BRING IN YOUR SCHEMAS & MODELS
-    require('../models/data/bodySectionModel');
+    // require the models
+    // const BodySectionModel  = require('../models/data/bodySectionModel').BodySectionModel;
+    // const EquipmentModel    = require('../models/data/equipmentModel').EquipmentModel;
+    // const ExerciseTypeModel     = require('../models/data/exerciseTypeModel').ExerciseTypeModel;
+    // const ModifierModel    = require('../models/data/modifierModel').ModifierModel;
+    // const MuscleModel           = require('../models/data/muscleModel').MuscleModel;
+    // // Load dependencies
+    // let bsModel = new BodySectionModel();
+    // // BRING IN YOUR SCHEMAS & MODELS
+    // var dataModels = {
+    //   BodySection: bsModel,
+    //   Equipment: new EquipmentModel(),
+    //   ExerciseType: new ExerciseTypeModel(),
+    //   Modifier: new ModifierModel(),
+    //   MuscleModel: new MuscleModel(bsModel),
+    // }
+    // put it in a public key
+    //console.log(dao.PersonaDataModels.GetModels());
+    this[_dataModelsKey] = dao.PersonaDataModels.GetModels();
+   // require('../models/data/bodySectionModel');
+  }
+
+  dataModels() {
+    return this[_dataModelsKey];
   }
 
   
