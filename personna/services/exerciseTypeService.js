@@ -1,18 +1,15 @@
 "use strict"
 // Imports
 const Q                     = require('q'),
-      BaseService       = require('./baseService').BaseService,
-      strings           = require('../models/strings/crudStrings').CrudStrings;
-
-const _etInstance =  Symbol();
+      BaseService       = require('./baseService').BaseService;
 
 /**
  * Controls Exercise Type DB operations agaisnt the DB
  */
-class ExerciseTypeService {
+class ExerciseTypeService extends BaseService {
 
   constructor(db) {
-    this[_etInstance] = db.dataModels().ExerciseType;
+    super(db.dataModels().ExerciseType);
   }
    /**
    * Adds an Exercise Type  to the DB
@@ -20,7 +17,7 @@ class ExerciseTypeService {
    */
   addExerciseType(eType) {
     let deferred = Q.defer();
-    let eTypeInstance = this[_etInstance];
+    let eTypeInstance = super.modelInstance();
     let eTypeModel = eTypeInstance.getModel();
     eTypeModel.Name = eType.name;
     eTypeModel.ExerciseTypeId = eType.id;
@@ -28,7 +25,7 @@ class ExerciseTypeService {
     eTypeModel.save((err) => {
       const successMessage = strings.Messages(eTypeInstance.getSchemaName()).ADDED;
       const errorMessage = strings.Messages(eTypeInstance.getSchemaName()).COULD_NOT_SAVE;
-      BaseService.prepareResult(deferred, successMessage, eTypeModel, errorMessage, err);
+      ExerciseTypeService.prepareResult(deferred, successMessage, eTypeModel, errorMessage, err);
     }); 
     return deferred.promise;
   }
@@ -39,12 +36,12 @@ class ExerciseTypeService {
    */
   getExerciseTypes(query) {
     let deferred = Q.defer();
-    let eTypeInstance = this[_etInstance];
+    let eTypeInstance = super.modelInstance();
     let eTypeModel = eTypeInstance.getModelList();
     eTypeModel.find(query, (err, eTypes) => {
       const successMessage = '';
       const errorMessage = strings.Messages(eTypeInstance.getSchemaName()).COULD_NOT_GET;
-      BaseService.prepareResult(deferred, successMessage, eTypes, errorMessage, err);
+      ExerciseTypeService.prepareResult(deferred, successMessage, eTypes, errorMessage, err);
     });
     return deferred.promise;
   }
