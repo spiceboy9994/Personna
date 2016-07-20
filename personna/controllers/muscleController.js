@@ -1,10 +1,6 @@
 "use strict"
 const express               = require('express'),
       router                = express.Router();
-      // MuscleService         = require('../services/muscleService').MuscleService,
-      // BodySectionService    = require('../services/bodySectionService').BodySectionService,
-      // muscleProxy           = new MuscleService(),
-      // bodySectionProxy      = new BodySectionService();
 
 
 /**
@@ -52,7 +48,7 @@ router.post('/', function(req, res, next) {
     }
   })
   .then((muscleResult) => {
-    let muscleJson = muscleJson.toJSON();
+    let muscleJson = muscleResult.toJSON();
    
     res.json(muscleJson);
   })
@@ -85,4 +81,54 @@ router.get('/', function(req, res, next) {
     res.json(err.message);
   })
 });
+
+/**
+ * Updates a muscle
+ * @param  {[type]}   req   [description]
+ * @param  {[type]}   res   [description]
+ * @param  {Function} next) {             const muscleProxy [description]
+ * @return {[type]}         [description]
+ */
+router.patch('/:muscleId', function(req, res, next) {
+  const muscleProxy = req.app.get("services").Muscle;
+  const modifierProxy = req.app.get("services").Modifier;
+  const muscleId = req.params.muscleId;
+  let modifierJson = null;
+  let modifierPromise  = null;
+  // set the base props to modify
+  let muscle = {
+    id: muscleId,
+    name: req.body.name,
+    description: req.body.description,
+    shortDescription: req.body.shortDescription,
+    imageInBodyUrl: req.body.imageInBodyUrl,
+    modifiedBy: 1, // TODO: use session user
+    modifiedOn: new Date(),
+  }
+  if (req.body.modifierIds) {
+    modifierPromise = modifierProxy.getByMultiplesIds(req.body.modifierIds.split(','));
+  } else {
+    modifierPromise = modifierProxy.emptyPromise();
+  }
+  modifierPromise
+  .then((modifierResult) => {
+    modifierJson = modifierResult.toJSON();
+    if (modifierJson.success) {
+      // Save the muscle
+      return muscleProxy.updateMuscle(muscle, modifierJson.item);
+    } else {
+      throw(modifierJson.item);
+    }
+  })
+  .then((muscleResult) => {
+    let muscleJson = muscleResult.toJSON();
+    res.json(muscleJson);
+  })
+  .fail((err) => {
+    // log the error
+    logger.logError(err);
+    // and return it
+    res.json(err.message);
+  })
+})
 module.exports = router;

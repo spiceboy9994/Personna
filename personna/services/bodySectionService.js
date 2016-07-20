@@ -1,18 +1,15 @@
 "use strict"
 // Imports
 const Q                 = require('q'),
-      BaseService       = require('./baseService').BaseService,
-      strings           = require('../models/strings/crudStrings').CrudStrings;
-
-const _bsInstance =  Symbol();
+      BaseService       = require('./baseService').BaseService;
 
 /**
  * Controls Body Section DB operations agaisnt the DB
  */
-class BodySectionService {
+class BodySectionService extends BaseService {
   
   constructor(db) {
-    this[_bsInstance] =  db.dataModels().BodySection;
+    super(db.dataModels().BodySection);
   }
   /**
    * Adds a Body Section to the DB
@@ -20,14 +17,14 @@ class BodySectionService {
    */
   addBodySection(section) {
     let deferred = Q.defer();
-    let bodySectionInstance = this[_bsInstance];
+    let bodySectionInstance = super.modelInstance();
     let bodySection = bodySectionInstance.getModel();
     bodySection.Name = section.name;
     bodySection.BodySectionId = section.id;
     bodySection.save((err) => {
-      const successMessage = strings.Messages(bodySectionInstance.getSchemaName()).ADDED;
-      const errorMessage = strings.Messages(bodySectionInstance.getSchemaName()).COULD_NOT_SAVE;
-      BaseService.prepareResult(deferred, successMessage, bodySection, errorMessage, err);
+      const successMessage = super.messages().ADDED;
+      const errorMessage = super.messages().COULD_NOT_SAVE;
+      BodySectionService.prepareResult(deferred, successMessage, bodySection, errorMessage, err);
     }); 
     return deferred.promise;
   }
@@ -39,12 +36,12 @@ class BodySectionService {
    */
   getBodySections(query) {
     let deferred = Q.defer();
-    let bodySectionInstance = this[_bsInstance];
+    let bodySectionInstance = super.modelInstance();
     let bodySection = bodySectionInstance.getModelList();
     bodySection.find(query, (err, sections) => {
       const successMessage = '';
-      const errorMessage = strings.Messages(bodySectionInstance.getSchemaName()).COULD_NOT_GET;
-      BaseService.prepareResult(deferred, successMessage, sections, errorMessage, err);
+      const errorMessage = super.messages().COULD_NOT_GET;
+      BodySectionService.prepareResult(deferred, successMessage, sections, errorMessage, err);
     });
     return deferred.promise;
   }
@@ -56,11 +53,11 @@ class BodySectionService {
    */
   getById(id) {
     let deferred = Q.defer();
-    let bodySectionInstance = this[_bsInstance];
+    let bodySectionInstance = super.modelInstance();
     let bodySection = bodySectionInstance.getModelList();
     bodySection.findById(id, (err, section) => {
       const successMessage = '';
-      const errorMessage = strings.Messages(bodySectionInstance.getSchemaName()).COULD_NOT_GET;
+      const errorMessage = super.messages().COULD_NOT_GET;
       BaseService.prepareResult(deferred, successMessage, section, errorMessage, err);
     });
     return deferred.promise;
