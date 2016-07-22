@@ -18,6 +18,7 @@ const EquipmentService  = require('./services/equipmentService').EquipmentServic
 const ModifierService  = require('./services/modifierService').ModifierService;
 const MuscleService  = require('./services/muscleService').MuscleService;
 const ExerciseTypeService  = require('./services/exerciseTypeService').ExerciseTypeService;
+const ExerciseService  = require('./services/exerciseService').ExerciseService;
 
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
@@ -64,12 +65,12 @@ app.set('services', services);
 // })
 
 app.use('/', index);
-app.use('/users', users);
-app.use('/bodySection', bodySection);
-app.use('/equipment', equipment);
-app.use('/modifier', modifier);
-app.use('/exercisetype', exerciseType);
-app.use('/muscle', muscle);
+// app.use('/users', users);
+// app.use('/bodySection', bodySection);
+// app.use('/equipment', equipment);
+// app.use('/modifier', modifier);
+// app.use('/exercisetype', exerciseType);
+// app.use('/muscle', muscle);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

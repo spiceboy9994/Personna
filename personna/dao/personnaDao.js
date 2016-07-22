@@ -1,22 +1,25 @@
  "use strict"
-const BodySectionModel  = require('../models/data/bodySectionModel').BodySectionModel;
-const EquipmentModel    = require('../models/data/equipmentModel').EquipmentModel;
+const BodySectionModel      = require('../models/data/bodySectionModel').BodySectionModel;
+const EquipmentModel        = require('../models/data/equipmentModel').EquipmentModel;
 const ExerciseTypeModel     = require('../models/data/exerciseTypeModel').ExerciseTypeModel;
-const ModifierModel    = require('../models/data/modifierModel').ModifierModel;
+const ModifierModel         = require('../models/data/modifierModel').ModifierModel;
 const MuscleModel           = require('../models/data/muscleModel').MuscleModel;
+const ExerciseModel         = require('../models/data/exerciseModel').ExerciseModel;
 
 const _modelsKey = Symbol();
 class PersonaDataModels {
-  static GetModels() {
+  static GetModels(identity) {
      // Load dependencies
     let bsModel = new BodySectionModel();
     let modifierModel = new ModifierModel();
+    let exerciseTypeModel = new ExerciseTypeModel();
     this[_modelsKey] = {
       BodySection: bsModel,
       Equipment: new EquipmentModel(),
-      ExerciseType: new ExerciseTypeModel(),
+      ExerciseType: exerciseTypeModel,
       Modifier: modifierModel,
-      Muscle: new MuscleModel(bsModel, modifierModel),
+      Muscle: new MuscleModel(bsModel, modifierModel, identity),
+      Exercise: new ExerciseModel(exerciseTypeModel, identity),
     }
 
     return  this[_modelsKey];

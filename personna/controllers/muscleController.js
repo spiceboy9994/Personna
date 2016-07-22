@@ -1,8 +1,6 @@
 "use strict"
 const express               = require('express'),
       router                = express.Router();
-
-
 /**
  * Adds an  Muscle
  * @param  {[type]} req   [description]
@@ -58,6 +56,7 @@ router.post('/', function(req, res, next) {
     // and return it
     res.json(err.message);
   })
+  .done();
 });
 
 /**
@@ -130,5 +129,6 @@ router.patch('/:muscleId', function(req, res, next) {
     // and return it
     res.json(err.message);
   })
+  .done();
 })
 module.exports = router;
