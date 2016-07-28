@@ -7,8 +7,8 @@ const _bsSchemaKey = Symbol();
 
 // schema definition
 const _bsSchema = {
-  ExerciseTypeId: {type: Number},
   Name: {type: String},
+  IsPrimary: {type: Boolean},
   Description: {type: String},
 };
 

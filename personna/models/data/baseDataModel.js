@@ -1,6 +1,6 @@
 "use strict"
 const mongoose = require( 'mongoose' );
-const autoIncrement = require( 'mongoose-auto-increment' );
+// const autoIncrement = require( 'mongoose-auto-increment' );
 // const _schemaKey = Symbol();
 const _schemaDefinition = Symbol();
 const _schemaNameKey = Symbol();
@@ -19,7 +19,7 @@ const _relTypes = {
  * Base Data Model to construct mongoose schemas and models
  */
 class BaseDataModel {
-  constructor(modelSettings, modelName, relationships, autoIncrementField) {
+  constructor(modelSettings, modelName, relationships, autoIncrementField, autoIncrement) {
     // create simple models (catalog based)
     if (arguments.length === 2) {
       this[_schemaDefinition] = modelSettings;
@@ -28,7 +28,7 @@ class BaseDataModel {
       let model =  mongoose.model(modelName, baseSchema);
       this[_modelListKey] = model;
       this[_modelSchemaKey] = baseSchema; 
-    } else if(arguments.length === 4) {
+    } else if(arguments.length === 5) {
       // create complex model including relationships and auto increment field
       this[_schemaDefinition] = modelSettings;
       this[_schemaNameKey] = modelName;

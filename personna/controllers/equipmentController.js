@@ -1,10 +1,6 @@
 "use strict"
 const express             = require('express'),
       router              = express.Router();
-      // EquipmentService    = require('../services/equipmentService').EquipmentService,
-      // equipmentproxy      = new EquipmentService();
-
-
 /**
  * Adds an  Equipment piece
  * @param  {[type]} req   [description]
@@ -27,6 +23,7 @@ router.post('/', function(req, res, next) {
     logger.logError(err);
     res.json(err.message);
   })
+  .done();
 });
 
 /**
@@ -46,5 +43,6 @@ router.get('/', function(req, res, next) {
     logger.logError(err);
     res.json(err.message);
   })
+  .done();
 });
 module.exports = router;
