@@ -15,7 +15,7 @@ class ExerciseService extends BaseService {
    * Adds a Exercise to the DB
    * @param {object} exercise Exercise
    */
-  addExercise(exercise) {
+  addExercise(exercise, eTypes) {
     let deferred = Q.defer();
     let exerciseInstance = super.modelInstance();
     let exerciseModel = exerciseInstance.getModel();
@@ -23,6 +23,9 @@ class ExerciseService extends BaseService {
     exerciseModel.Description = exercise.description;
     exerciseModel.CreatedBy = exercise.createdBy;
     exerciseModel.CreateOn = exercise.createdOn;
+    eTypes.forEach((eType) => {
+      exerciseModel.ExerciseTypes.push(eType);
+    });
     exerciseModel.save((err) => {
       const successMessage = super.messages().ADDED;
       const errorMessage = super.messages().COULD_NOT_SAVE;

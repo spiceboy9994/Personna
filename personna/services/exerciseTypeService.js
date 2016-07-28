@@ -20,11 +20,10 @@ class ExerciseTypeService extends BaseService {
     let eTypeInstance = super.modelInstance();
     let eTypeModel = eTypeInstance.getModel();
     eTypeModel.Name = eType.name;
-    eTypeModel.ExerciseTypeId = eType.id;
     eTypeModel.Description = eType.description;
     eTypeModel.save((err) => {
-      const successMessage = strings.Messages(eTypeInstance.getSchemaName()).ADDED;
-      const errorMessage = strings.Messages(eTypeInstance.getSchemaName()).COULD_NOT_SAVE;
+      const successMessage = super.messages().ADDED;
+      const errorMessage = super.messages().COULD_NOT_SAVE;
       ExerciseTypeService.prepareResult(deferred, successMessage, eTypeModel, errorMessage, err);
     }); 
     return deferred.promise;
@@ -40,8 +39,43 @@ class ExerciseTypeService extends BaseService {
     let eTypeModel = eTypeInstance.getModelList();
     eTypeModel.find(query, (err, eTypes) => {
       const successMessage = '';
-      const errorMessage = strings.Messages(eTypeInstance.getSchemaName()).COULD_NOT_GET;
+      const errorMessage = super.messages().COULD_NOT_GET;
       ExerciseTypeService.prepareResult(deferred, successMessage, eTypes, errorMessage, err);
+    });
+    return deferred.promise;
+  }
+
+  /**
+   * Gets all the exercise types and adds the IsPrimary prop
+   * @param  {[type]} eTypes [description]
+   * @return {[type]}        [description]
+   */
+  getByMultiplesIds(eTypes) {
+    let deferred = Q.defer();
+    let eTypeInstance = super.modelInstance();
+    let eTypeModel = eTypeInstance.getModelList()
+    // get the ids
+    let ids = [];
+    eTypes.forEach((etype) => {
+      ids.push(etype.id);
+    });
+    let idArray = ExerciseTypeService.idsToMongoose(ids);
+    let query = {
+      '_id': {
+        $in: idArray
+      }
+    };
+    eTypeModel.find(query).sort('_id').exec((err, dbETypes) => {
+      if (!err && dbETypes.length) {       
+        for (let i = 0; i < dbETypes.length; i++) {
+          if (i < eTypes.length) {
+            dbETypes[i].IsPrimary = eTypes[i].isPrimary;
+          }
+        }
+      }
+      const successMessage = '';
+      const errorMessage = super.messages().COULD_NOT_GET;
+      ExerciseTypeService.prepareResult(deferred, successMessage, dbETypes, errorMessage, err);
     });
     return deferred.promise;
   }

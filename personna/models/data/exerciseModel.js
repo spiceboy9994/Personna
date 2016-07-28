@@ -3,11 +3,10 @@
 const BaseDataModel = require('./baseDataModel').BaseDataModel;
 
 // Symbol keys
-const _exIdentity = null; // TODO: no worky 'MuscleId'
+const _exIdentity = "ExerciseId"; 
 
 // schema definition
 const _exSchema = {
-  ExerciseId: {type: Number},
   Name: {type: String},
   Description: {type: String},
   CreatedBy: {type: Number},
@@ -26,8 +25,7 @@ class ExerciseModel extends BaseDataModel {
     const relTypes = BaseDataModel.relationShipTypes();
     // create relationships
     var relationships = [
-      { childModel: exerciseType, type: relTypes.ONE_TO_ONE, fieldName: 'ExerciseType' },
-      // { childModel: modifier, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'Modifiers' },
+      { childModel: exerciseType, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'ExerciseTypes' },
     ];
     super(_exSchema, _exSchemaName, relationships, _exIdentity, identity);
   }

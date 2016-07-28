@@ -14,7 +14,6 @@ router.post('/', function(req, res, next) {
   let eType = {
     name: req.body.name,
     description: req.body.description,
-    id: req.body.id
   };
   var result = exerciseTypeProxy.addExerciseType(eType).then((result) => {
     res.json(result);

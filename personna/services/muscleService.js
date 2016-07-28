@@ -30,9 +30,6 @@ class MuscleService extends BaseService {
       mModel.Modifiers.push(modifier);
     });
     mModel.save((err) => {
-      console.log('after save');
-      console.log(err);
-      console.log(mModel);
       const successMessage = super.messages().ADDED;
       const errorMessage = super.messages().COULD_NOT_SAVE;
       MuscleService.prepareResult(deferred, successMessage, mModel, errorMessage, err);

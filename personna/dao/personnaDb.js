@@ -71,6 +71,9 @@ class PersonnaDb {
    */
   openMongooseConnection() {
     mongoose.connect(connectionUrl); 
+    // set the identity plugin
+    autoIncrement.initialize(mongoose.connection);
+    this[_autoIncrementKey] = autoIncrement;
 
     // CONNECTION EVENTS
     // When successfully connected

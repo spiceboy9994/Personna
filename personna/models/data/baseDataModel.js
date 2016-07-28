@@ -28,7 +28,7 @@ class BaseDataModel {
       let model =  mongoose.model(modelName, baseSchema);
       this[_modelListKey] = model;
       this[_modelSchemaKey] = baseSchema; 
-    } else if(arguments.length === 4) {
+    } else if(arguments.length === 5) {
       // create complex model including relationships and auto increment field
       this[_schemaDefinition] = modelSettings;
       this[_schemaNameKey] = modelName;
