@@ -35,6 +35,36 @@ class ExerciseService extends BaseService {
   }
 
   /**
+   * Updates an exercise
+   * @param  {[type]} exercise [description]
+   * @param  {[type]} eTypes   [description]
+   * @return {[type]}          [description]
+   */
+  updateExercise(exercise, eTypes) {
+    let deferred = Q.defer();
+    let exerciseInstance = super.modelInstance();
+    let exerciseModel = exerciseInstance.getModelList();
+    const successMessage = super.messages().UPDATED;
+    const errorMessage = super.messages().COULD_NOT_SAVE;
+    let updatedProps = {
+      Name: exercise.name,
+      Description: exercise.description,
+      ModifiedBy: exercise.modifiedBy,
+      ModifiedOn: exercise.modifiedOn,
+    }
+    // add modifiers just if they changed
+    if (eTypes && eTypes.length > 0) {
+      updatedProps.ExerciseTypes = eTypes;
+    }
+    let query = ExerciseService.queryById(exercise.id);
+    let options = { multi: false };
+    exerciseModel.update(query, updatedProps, options, (err, dExercise) => {
+      ExerciseService.prepareResult(deferred, successMessage, dExercise, errorMessage, err);
+    }); 
+    return deferred.promise;
+  }
+
+  /**
    * Gets the list of Exercises
    * @param  {[type]} query [description]
    * @return {[type]}       [description]

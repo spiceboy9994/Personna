@@ -4,7 +4,7 @@ const express             = require('express'),
       _                   = require('lodash');
 
 /**
- * Adds an  Equipment piece
+ * Adds an  Exercise item
  * @param  {[type]} req   [description]
  * @param  {[type]} res   [description]
  * @param  {Object} next) {             let section [description]
@@ -15,6 +15,7 @@ router.post('/', function(req, res, next) {
   const exerciseTypeProxy = req.app.get('services').ExerciseType;
   const logger = req.app.get('customLogger');
   let eTypeJson = null;
+  let eTypePromise  = null;
   const exercise = {
     name: req.body.name,
     description: req.body.description,
@@ -43,6 +44,57 @@ router.post('/', function(req, res, next) {
     res.json(err);
   })
   .done();
+});
+
+/**
+ * Updates an Exercise
+ * @param  {[type]}   req   [description]
+ * @param  {[type]}   res   [description]
+ * @param  {Function} next) {             const exerciseProxy [description]
+ * @return {[type]}         [description]
+ */
+router.patch('/:exerciseId', function(req, res, next) {
+  const exerciseProxy = req.app.get('services').Exercise;
+  const exerciseTypeProxy = req.app.get('services').ExerciseType;
+  const logger = req.app.get('customLogger');
+  const exerciseId = req.params.exerciseId;
+  let eTypeJson = null;
+  let eTypePromise = null;
+  const exercise = {
+    id: exerciseId,
+    name: req.body.name,
+    description: req.body.description,
+    modifiedBy: 1, // TODO: use session user
+    modifiedOn: new Date(),
+  };
+  if (req.body.exerciseTypes) {
+    // sort the objects by id
+    let sortedTypes = _.orderBy(req.body.exerciseTypes, ["id"], ["asc"]);
+    eTypePromise = exerciseTypeProxy.getByMultiplesIds(sortedTypes);
+  } else {
+    eTypePromise = exerciseTypeProxy.emptyPromise();
+  }
+  eTypePromise
+  .then((etypesResult) => {
+    eTypeJson = etypesResult.toJSON();
+    // add the exercise if the result is correct
+    if(eTypeJson.success) {
+      return exerciseProxy.updateExercise(exercise, eTypeJson.item);
+    } else {
+      // item should be error, throw it
+      throw(eTypeJson.item);
+    }
+  })
+  .then((result) => {
+    res.json(result.toJSON());
+  })
+  .fail((err) => {
+    logger.logError(err);
+    res.json(err);
+  })
+  .done();
+  
+  
 });
 
 /**
