@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 const express             = require('express'),
       router              = express.Router(),
@@ -13,9 +17,11 @@ const express             = require('express'),
 router.post('/', function(req, res, next) {
   const exerciseProxy = req.app.get('services').Exercise;
   const exerciseTypeProxy = req.app.get('services').ExerciseType;
+  const muscleProxy = req.app.get('services').Muscle;
   const logger = req.app.get('customLogger');
   let eTypeJson = null;
   let eTypePromise  = null;
+  let muscleJson = null;
   const exercise = {
     name: req.body.name,
     description: req.body.description,
@@ -30,10 +36,19 @@ router.post('/', function(req, res, next) {
     eTypeJson = etypesResult.toJSON();
     // add the exercise if the result is correct
     if(eTypeJson.success) {
-      return exerciseProxy.addExercise(exercise, eTypeJson.item);
+      return muscleProxy.getByMultiplesIds(req.body.muscleIds);
     } else {
       // item should be error, throw it
       throw(eTypeJson.item);
+    }
+  })
+  .then((muscleResult) => {
+    muscleJson = muscleResult.toJSON();
+    if(muscleJson.success) {
+      return exerciseProxy.addExercise(exercise, eTypeJson.item, muscleJson.item);
+    } else {
+      // item should be error, throw it
+      throw(muscleJson.item);
     }
   })
   .then((result) => {
@@ -56,10 +71,13 @@ router.post('/', function(req, res, next) {
 router.patch('/:exerciseId', function(req, res, next) {
   const exerciseProxy = req.app.get('services').Exercise;
   const exerciseTypeProxy = req.app.get('services').ExerciseType;
+  const muscleProxy = req.app.get('services').Muscle;
   const logger = req.app.get('customLogger');
   const exerciseId = req.params.exerciseId;
   let eTypeJson = null;
+  let muscleJson = null;
   let eTypePromise = null;
+  let musclePromise = null;
   const exercise = {
     id: exerciseId,
     name: req.body.name,
@@ -67,6 +85,7 @@ router.patch('/:exerciseId', function(req, res, next) {
     modifiedBy: 1, // TODO: use session user
     modifiedOn: new Date(),
   };
+  // sent the exercise types
   if (req.body.exerciseTypes) {
     // sort the objects by id
     let sortedTypes = _.orderBy(req.body.exerciseTypes, ["id"], ["asc"]);
@@ -74,15 +93,31 @@ router.patch('/:exerciseId', function(req, res, next) {
   } else {
     eTypePromise = exerciseTypeProxy.emptyPromise();
   }
+  // send the muscles
+  if (req.body.muscleIds) {
+    musclePromise = muscleProxy.getByMultiplesIds(req.body.muscleIds);
+  } else {
+    musclePromise = muscleProxy.emptyPromise();
+  }
   eTypePromise
   .then((etypesResult) => {
     eTypeJson = etypesResult.toJSON();
     // add the exercise if the result is correct
     if(eTypeJson.success) {
-      return exerciseProxy.updateExercise(exercise, eTypeJson.item);
+      return musclePromise;
     } else {
       // item should be error, throw it
       throw(eTypeJson.item);
+    }
+  })
+  .then((muscleResult) => {
+    muscleJson = muscleResult.toJSON();
+    if (muscleJson.success) {
+      // save the exercise
+      return exerciseProxy.updateExercise(exercise, eTypeJson.item, muscleJson.item);
+    } else {
+      // item should be error, throw it
+      throw(muscleJson.item)
     }
   })
   .then((result) => {
@@ -93,8 +128,6 @@ router.patch('/:exerciseId', function(req, res, next) {
     res.json(err);
   })
   .done();
-  
-  
 });
 
 /**

@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
 const Q                 = require('q'),
@@ -15,7 +19,7 @@ class ExerciseService extends BaseService {
    * Adds a Exercise to the DB
    * @param {object} exercise Exercise
    */
-  addExercise(exercise, eTypes) {
+  addExercise(exercise, eTypes, muscles) {
     let deferred = Q.defer();
     let exerciseInstance = super.modelInstance();
     let exerciseModel = exerciseInstance.getModel();
@@ -26,9 +30,14 @@ class ExerciseService extends BaseService {
     eTypes.forEach((eType) => {
       exerciseModel.ExerciseTypes.push(eType);
     });
+    muscles.forEach((muscle) => {
+      exerciseModel.Muscles.push(muscle);
+    })
     exerciseModel.save((err) => {
       const successMessage = super.messages().ADDED;
       const errorMessage = super.messages().COULD_NOT_SAVE;
+      console.log('--> Response');
+      console.log(exerciseModel);
       ExerciseService.prepareResult(deferred, successMessage, exerciseModel, errorMessage, err);
     }); 
     return deferred.promise;
@@ -40,7 +49,7 @@ class ExerciseService extends BaseService {
    * @param  {[type]} eTypes   [description]
    * @return {[type]}          [description]
    */
-  updateExercise(exercise, eTypes) {
+  updateExercise(exercise, eTypes, muscles) {
     let deferred = Q.defer();
     let exerciseInstance = super.modelInstance();
     let exerciseModel = exerciseInstance.getModelList();
@@ -55,6 +64,10 @@ class ExerciseService extends BaseService {
     // add modifiers just if they changed
     if (eTypes && eTypes.length > 0) {
       updatedProps.ExerciseTypes = eTypes;
+    }
+    // add muscles if they changed
+    if (muscles && muscles.length > 0) {
+       updatedProps.Muscles = muscles;
     }
     let query = ExerciseService.queryById(exercise.id);
     let options = { multi: false };
@@ -80,6 +93,24 @@ class ExerciseService extends BaseService {
     });
     return deferred.promise;
   }
+
+  /**
+   * Gets a Exercise by id
+   * @param  {[type]} id [description]
+   * @return {[type]}    [description]
+   */
+  getById(id) {
+    let deferred = Q.defer();
+    let exerciseInstance = super.modelInstance();
+    let exerciseModel = exerciseInstance.getModelList();
+    exerciseModel.findById(id, (err, exercise) => {
+      const successMessage = '';
+      const errorMessage = super.messages().COULD_NOT_GET;
+      BaseService.prepareResult(deferred, successMessage, exercise, errorMessage, err);
+    });
+    return deferred.promise;
+  }
+
 }
 
 module.exports.ExerciseService = ExerciseService;

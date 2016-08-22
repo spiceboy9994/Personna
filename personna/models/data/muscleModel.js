@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
 const BaseDataModel = require('./baseDataModel').BaseDataModel;

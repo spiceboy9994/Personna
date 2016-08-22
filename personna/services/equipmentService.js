@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
 const Q                 = require('q'),
@@ -44,6 +48,22 @@ class EquipmentService extends BaseService {
       EquipmentService.prepareResult(deferred, successMessage, equipments, errorMessage, err);
     });
     return deferred.promise;
+  }
+
+   /**
+   * Generates multiple ids as a moongose valid array
+   * @param  {[type]} ids [description]
+   * @return {[type]}     [description]
+   */
+  getByMultiplesIds(ids) {
+    let idArray = EquipmentService.idsToMongoose(ids);
+    let query = {
+      '_id': {
+        $in: idArray
+      }
+    };
+    return this.getEquipments(query); 
+
   }
 }
 

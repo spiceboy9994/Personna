@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -13,6 +17,7 @@ var exerciseType = require('./controllers/exerciseTypeController');
 var exercise = require('./controllers/exerciseController');
 var modifier = require('./controllers/modifierController');
 var muscle = require('./controllers/muscleController');
+var exerciseEquipment = require('./controllers/exerciseEquipmentController');
 // Services
 const BodySectionService  = require('./services/bodySectionService').BodySectionService;
 const EquipmentService  = require('./services/equipmentService').EquipmentService;
@@ -20,7 +25,7 @@ const ModifierService  = require('./services/modifierService').ModifierService;
 const MuscleService  = require('./services/muscleService').MuscleService;
 const ExerciseTypeService  = require('./services/exerciseTypeService').ExerciseTypeService;
 const ExerciseService  = require('./services/exerciseService').ExerciseService;
-
+const ExerciseEquipmentService  = require('./services/exerciseEquipmentService').ExerciseEquipmentService;
 
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
@@ -54,6 +59,7 @@ const services = {
   ExerciseType: new ExerciseTypeService(dbConnection),
   Muscle: new MuscleService(dbConnection),
   Exercise: new ExerciseService(dbConnection),
+  ExerciseEquipment: new ExerciseEquipmentService(dbConnection),
 }
 
 console.log(dbConnection);
@@ -70,6 +76,7 @@ app.use('/modifier', modifier);
 app.use('/exercisetype', exerciseType);
 app.use('/muscle', muscle);
 app.use('/exercise', exercise);
+app.use('/exercise-equipment', exerciseEquipment);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
