@@ -8,24 +8,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// var controllers
-var index = require('./controllers/index');
-var users = require('./controllers/users');
-var bodySection = require('./controllers/bodySectionController');
-var equipment = require('./controllers/equipmentController');
-var exerciseType = require('./controllers/exerciseTypeController');
-var exercise = require('./controllers/exerciseController');
-var modifier = require('./controllers/modifierController');
-var muscle = require('./controllers/muscleController');
-var exerciseEquipment = require('./controllers/exerciseEquipmentController');
-// Services
-const BodySectionService  = require('./services/bodySectionService').BodySectionService;
-const EquipmentService  = require('./services/equipmentService').EquipmentService;
-const ModifierService  = require('./services/modifierService').ModifierService;
-const MuscleService  = require('./services/muscleService').MuscleService;
-const ExerciseTypeService  = require('./services/exerciseTypeService').ExerciseTypeService;
-const ExerciseService  = require('./services/exerciseService').ExerciseService;
-const ExerciseEquipmentService  = require('./services/exerciseEquipmentService').ExerciseEquipmentService;
 
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
@@ -50,33 +32,17 @@ dbConnection.openMongooseConnection();
 
 app.set('dbAccess', dbConnection); 
 app.set('customLogger', personnaLogger);
-//bodySection.configure(dbConnection);
-// TODO Best approach for classes using controllers and services
-const services = {
-  Modifier: new ModifierService(dbConnection),
-  BodySection: new BodySectionService(dbConnection),
-  Equipment: new EquipmentService(dbConnection),
-  ExerciseType: new ExerciseTypeService(dbConnection),
-  Muscle: new MuscleService(dbConnection),
-  Exercise: new ExerciseService(dbConnection),
-  ExerciseEquipment: new ExerciseEquipmentService(dbConnection),
-}
 
 console.log(dbConnection);
+// get the services
+const services = require('./services/admin/include')(dbConnection);
+
 // // TODO Best approach for classes using controllers and services
 app.set('services', services);
+// add controller routes
+require('./controllers/admin/routes')(app);
+require('./controllers/public/routes')(app);
 
-
-
-app.use('/', index);
-app.use('/users', users);
-app.use('/bodySection', bodySection);
-app.use('/equipment', equipment);
-app.use('/modifier', modifier);
-app.use('/exercisetype', exerciseType);
-app.use('/muscle', muscle);
-app.use('/exercise', exercise);
-app.use('/exercise-equipment', exerciseEquipment);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -105,8 +71,6 @@ if (app.get('env') === 'development') {
     });
   });
 }
-
-
 
 // production error handler
 // no stacktraces leaked to user

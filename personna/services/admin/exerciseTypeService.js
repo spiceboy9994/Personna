@@ -5,7 +5,7 @@
 "use strict"
 // Imports
 const Q                     = require('q'),
-      BaseService       = require('./baseService').BaseService;
+      BaseService       = require('../baseService').BaseService;
 
 /**
  * Controls Exercise Type DB operations agaisnt the DB
