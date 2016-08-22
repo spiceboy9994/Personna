@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
 const Q                     = require('q'),
@@ -90,6 +94,22 @@ class MuscleService extends BaseService {
       MuscleService.prepareResult(deferred, successMessage, dMuscle, errorMessage, err);
     }); 
     return deferred.promise;
+  }
+
+  /**
+   * Generates multiple ids as a moongose valid array
+   * @param  {[type]} ids [description]
+   * @return {[type]}     [description]
+   */
+  getByMultiplesIds(ids) {
+    let idArray = MuscleService.idsToMongoose(ids);
+    let query = {
+      '_id': {
+        $in: idArray
+      }
+    };
+    return this.getMuscles(query); 
+
   }
 }
 

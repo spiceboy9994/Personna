@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 const mongoose = require( 'mongoose' );
 // const autoIncrement = require( 'mongoose-auto-increment' );
@@ -12,6 +16,7 @@ const _relTypes = {
   ONE_TO_FEW: 'one_few',
   ONE_TO_MANY: 'one_many',
   ONE_TO_FEW_INLINE: 'one_few_inline',
+  ONE_TO_ONE_REF: 'one_one_ref',
 };
 //const _autoIncrementKey = Symbol();
 
@@ -44,14 +49,13 @@ class BaseDataModel {
             modelSettings[rel.fieldName] = [rel.childModel.getModelSchema()];
             break
           }
-          case _relTypes.ONE_TO_FEW: {
+          case _relTypes.ONE_TO_FEW: 
+          case _relTypes.ONE_TO_MANY:
+          case _relTypes.ONE_TO_ONE_REF: {
+            console.log('child model ---> ' + rel.childModel.getModelSchema())
             modelSettings[rel.fieldName] = [{ type: objectId, ref: rel.childModel.getModelSchema() }];
             break;
           }
-          case _relTypes.ONE_TO_MANY: {
-            modelSettings[rel.fieldName] = [{ type: objectId, ref: rel.childModel.getModelSchema() }];
-            break;
-          } 
         } 
       });
       let baseSchema = new mongoose.Schema(modelSettings);
