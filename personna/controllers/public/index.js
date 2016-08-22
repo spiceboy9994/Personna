@@ -3,7 +3,7 @@
  * Author: David Espino
 */
 var express = require('express');
-var RoutineModel = require('../models/routineModel').RoutineModel;
+var RoutineModel = require('../../models/routineModel').RoutineModel;
 
 //import { TrackableModel } from './trackableModel';
 var router = express.Router();

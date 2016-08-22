@@ -4,24 +4,23 @@
 */
 "use strict"
 // Imports
-const BaseDataModel = require('./baseDataModel').BaseDataModel;
+const BaseDataModel = require('../baseDataModel').BaseDataModel;
 
 // Symbol keys
 const _bsSchemaKey = Symbol();
 
 // schema definition
 const _bsSchema = {
-  ModifierId: {type: Number},
+  BodySectionId: {type: Number},
   Name: {type: String},
-  Description: {type: String},
 };
 
-const _bsSchemaName = 'Modifier';
+const _bsSchemaName = 'BodySection';
 
 /**
  * Represents the BodySection Mongoose Schema and Model
  */
-class ModifierModel extends BaseDataModel {
+class BodySectionModel extends BaseDataModel {
   constructor() {
     super(_bsSchema, _bsSchemaName);
   }
@@ -36,4 +35,4 @@ class ModifierModel extends BaseDataModel {
 
 }
 
-module.exports.ModifierModel = ModifierModel;
+module.exports.BodySectionModel = BodySectionModel;

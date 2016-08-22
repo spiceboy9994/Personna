@@ -4,7 +4,7 @@
 */
 "use strict"
 // Imports
-const BaseDataModel = require('./baseDataModel').BaseDataModel;
+const BaseDataModel = require('../baseDataModel').BaseDataModel;
 // const BodySectionModel = require('./bodySectionModel').BaseDataModel;
 // const ModifierModel = require('./modifierModel').ModifierModel;
 

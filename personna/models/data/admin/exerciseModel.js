@@ -4,35 +4,33 @@
 */
 "use strict"
 // Imports
-const BaseDataModel = require('./baseDataModel').BaseDataModel;
+const BaseDataModel = require('../baseDataModel').BaseDataModel;
 
 // Symbol keys
-const _exIdentity = "ExerciseEquipmentId"; 
+const _exIdentity = "ExerciseId"; 
 
 // schema definition
 const _exSchema = {
+  Name: {type: String},
   Description: {type: String},
-  Notes: [String],
-  AnimationUrl: {type: String},
-  VideoUrl: {type: String},
   CreatedBy: {type: Number},
   CreatedOn: {type: Date},
   ModifiedBy: {type: Number},
   ModifiedOn: {type: Date},
 };
 
-const _exSchemaName = 'ExerciseEquipment';
+const _exSchemaName = 'Exercise';
 
 /**
  * Represents the BodySection Mongoose Schema and Model
  */
-class ExerciseEquipmentModel extends BaseDataModel {
-  constructor(exercise, equipment, identity) {
+class ExerciseModel extends BaseDataModel {
+  constructor(exerciseType, muscle, identity) {
     const relTypes = BaseDataModel.relationShipTypes();
     // create relationships
     var relationships = [
-      { childModel: exercise, type: relTypes.ONE_TO_ONE_REF, fieldName: 'Exercise' },
-      { childModel: equipment, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'Equipments' },
+      { childModel: exerciseType, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'ExerciseTypes' },
+      { childModel: muscle, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'Muscles' },
     ];
     super(_exSchema, _exSchemaName, relationships, _exIdentity, identity);
   }
@@ -47,4 +45,4 @@ class ExerciseEquipmentModel extends BaseDataModel {
 
 }
 
-module.exports.ExerciseEquipmentModel = ExerciseEquipmentModel;
+module.exports.ExerciseModel = ExerciseModel;
