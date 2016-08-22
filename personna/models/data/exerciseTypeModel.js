@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
 const BaseDataModel = require('./baseDataModel').BaseDataModel;
@@ -7,8 +11,8 @@ const _bsSchemaKey = Symbol();
 
 // schema definition
 const _bsSchema = {
-  ExerciseTypeId: {type: Number},
   Name: {type: String},
+  IsPrimary: {type: Boolean},
   Description: {type: String},
 };
 

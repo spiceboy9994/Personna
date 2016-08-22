@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 const express             = require('express'),
       router              = express.Router();
@@ -22,6 +26,7 @@ router.post('/', function(req, res, next) {
     logger.logError(err);
     res.json(err.message);
   })
+  .done();
 });
 
 /**
@@ -32,7 +37,6 @@ router.post('/', function(req, res, next) {
  * @return {[type]}         [description]
  */
 router.get('/', function(req, res, next) {
-  
   const bodySectionProxy = req.app.get("services").BodySection;
   const logger = req.app.get("customLogger");
   var result = bodySectionProxy.getBodySections({}).then((result) => {
@@ -42,6 +46,7 @@ router.get('/', function(req, res, next) {
     logger.logError(err);
     res.json(err.message);
   })
+  .done();
 });
   
 module.exports = router;

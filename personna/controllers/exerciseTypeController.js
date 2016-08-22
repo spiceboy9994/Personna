@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 const express               = require('express'),
       router                = express.Router();
@@ -14,7 +18,6 @@ router.post('/', function(req, res, next) {
   let eType = {
     name: req.body.name,
     description: req.body.description,
-    id: req.body.id
   };
   var result = exerciseTypeProxy.addExerciseType(eType).then((result) => {
     res.json(result);
@@ -23,6 +26,7 @@ router.post('/', function(req, res, next) {
     logger.logError(err);
     res.json(err.message);
   })
+  .done();
 });
 
 /**
@@ -42,5 +46,6 @@ router.get('/', function(req, res, next) {
     logger.logError(err);
     res.json(err.message);
   })
+  .done();
 });
 module.exports = router;

@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -10,14 +14,18 @@ var users = require('./controllers/users');
 var bodySection = require('./controllers/bodySectionController');
 var equipment = require('./controllers/equipmentController');
 var exerciseType = require('./controllers/exerciseTypeController');
+var exercise = require('./controllers/exerciseController');
 var modifier = require('./controllers/modifierController');
 var muscle = require('./controllers/muscleController');
+var exerciseEquipment = require('./controllers/exerciseEquipmentController');
 // Services
 const BodySectionService  = require('./services/bodySectionService').BodySectionService;
 const EquipmentService  = require('./services/equipmentService').EquipmentService;
 const ModifierService  = require('./services/modifierService').ModifierService;
 const MuscleService  = require('./services/muscleService').MuscleService;
 const ExerciseTypeService  = require('./services/exerciseTypeService').ExerciseTypeService;
+const ExerciseService  = require('./services/exerciseService').ExerciseService;
+const ExerciseEquipmentService  = require('./services/exerciseEquipmentService').ExerciseEquipmentService;
 
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
@@ -29,7 +37,6 @@ var personnaLogger = new PersonnaLogger();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -51,17 +58,15 @@ const services = {
   Equipment: new EquipmentService(dbConnection),
   ExerciseType: new ExerciseTypeService(dbConnection),
   Muscle: new MuscleService(dbConnection),
+  Exercise: new ExerciseService(dbConnection),
+  ExerciseEquipment: new ExerciseEquipmentService(dbConnection),
 }
 
 console.log(dbConnection);
 // // TODO Best approach for classes using controllers and services
 app.set('services', services);
 
-// set the common logger
-// app.use(function(req, res, next) {
-//   req.app.locals.personaLogger = personnaLogger;
-//   next();
-// })
+
 
 app.use('/', index);
 app.use('/users', users);
@@ -70,6 +75,8 @@ app.use('/equipment', equipment);
 app.use('/modifier', modifier);
 app.use('/exercisetype', exerciseType);
 app.use('/muscle', muscle);
+app.use('/exercise', exercise);
+app.use('/exercise-equipment', exerciseEquipment);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -85,7 +92,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    // console.log('Error 1');
+     console.log('Error 1');
     res.status(err.status || 500);
     // const perLogger = req.app.locals.personaLogger;
     // perLogger.logError(err);
@@ -104,7 +111,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  // console.log('Error 2'); 
+   console.log('Error 2'); 
   res.status(err.status || 500);
   const perLogger = req.app.locals.personaLogger;
   perLogger.logError(err);
@@ -116,8 +123,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-
 
 
 module.exports = app;

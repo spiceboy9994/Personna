@@ -1,3 +1,7 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 var express = require('express');
 var RoutineModel = require('../models/routineModel').RoutineModel;
 

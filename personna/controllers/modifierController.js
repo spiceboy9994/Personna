@@ -1,10 +1,10 @@
-// TODO Best approach for classes using controllers and services
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 const express             = require('express'),
       router              = express.Router();
-      // ModifierService    = require('../services/modifierService').ModifierService;
-      // modifierProxy      = new ModifierService();
-
 
 /**
  * Adds an  Equipment piece
@@ -28,6 +28,7 @@ router.post('/', function(req, res, next) {
     logger.logError(err);
     res.json(err);
   })
+  .done();
 });
 
 /**
@@ -47,5 +48,6 @@ router.get('/', function(req, res, next) {
     logger.logError(err);
     res.json(err);
   })
+  .done();
 });
 module.exports = router;

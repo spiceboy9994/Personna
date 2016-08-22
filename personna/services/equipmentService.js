@@ -1,19 +1,19 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
 const Q                 = require('q'),
-      EquipmentModel    = require('../models/data/equipmentModel').EquipmentModel,
-      BaseService       = require('./baseService').BaseService,
-      strings           = require('../models/strings/crudStrings').CrudStrings;
-
-const _esInstance =  Symbol();
+      BaseService       = require('./baseService').BaseService;
 
 /**
  * Controls Equipment DB operations agaisnt the DB
  */
-class EquipmentService {
+class EquipmentService extends BaseService {
 
   constructor(db) {
-    this[_esInstance] = db.dataModels().Equipment;
+    super(db.dataModels().Equipment);
   }
    /**
    * Adds an Equipment  to the DB
@@ -21,15 +21,15 @@ class EquipmentService {
    */
   addEquipment(equip) {
     let deferred = Q.defer();
-    let equipmentInstance = this[_esInstance];
+    let equipmentInstance = super.modelInstance();
     let equipment = equipmentInstance.getModel();
     equipment.Name = equip.name;
     equipment.EquipmentId = equip.id;
     equipment.Description = equip.description;
     equipment.save((err) => {
-      const successMessage = strings.Messages(equipmentInstance.getSchemaName()).ADDED;
-      const errorMessage = strings.Messages(equipmentInstance.getSchemaName()).COULD_NOT_SAVE;
-      BaseService.prepareResult(deferred, successMessage, equipment, errorMessage, err);
+      const successMessage = super.messages().ADDED;
+      const errorMessage = super.messages().COULD_NOT_SAVE;
+      EquipmentService.prepareResult(deferred, successMessage, equipment, errorMessage, err);
     }); 
     return deferred.promise;
   }
@@ -40,14 +40,30 @@ class EquipmentService {
    */
   getEquipments(query) {
     let deferred = Q.defer();
-    let equipmentInstance = this[_esInstance];
+    let equipmentInstance = super.modelInstance();
     let equipment = equipmentInstance.getModelList();
     equipment.find(query, (err, equipments) => {
       const successMessage = '';
-      const errorMessage = strings.Messages(equipmentInstance.getSchemaName()).COULD_NOT_GET;
-      BaseService.prepareResult(deferred, successMessage, equipments, errorMessage, err);
+      const errorMessage = super.messages().COULD_NOT_GET;
+      EquipmentService.prepareResult(deferred, successMessage, equipments, errorMessage, err);
     });
     return deferred.promise;
+  }
+
+   /**
+   * Generates multiple ids as a moongose valid array
+   * @param  {[type]} ids [description]
+   * @return {[type]}     [description]
+   */
+  getByMultiplesIds(ids) {
+    let idArray = EquipmentService.idsToMongoose(ids);
+    let query = {
+      '_id': {
+        $in: idArray
+      }
+    };
+    return this.getEquipments(query); 
+
   }
 }
 

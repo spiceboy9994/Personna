@@ -1,14 +1,19 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
-const url           = require('url'),
-      connectionUrl = process.env.CONNECTION_STRING || 'mongodb://localhost:27017/personna',
-      parsedUrl     = url.parse(connectionUrl),
-      Db            = require('mongodb').Db,
-      Server        = require('mongodb').Server,
-      Connection    = require('mongodb').Connection,
-      Q             = require("q"),
-      mongoose      = require("mongoose"),
-      dao          = require('./personnaDao')
+const url             = require('url'),
+      connectionUrl   = process.env.CONNECTION_STRING || 'mongodb://localhost:27017/personna',
+      parsedUrl       = url.parse(connectionUrl),
+      Db              = require('mongodb').Db,
+      Server          = require('mongodb').Server,
+      Connection      = require('mongodb').Connection,
+      Q               = require("q"),
+      mongoose        = require("mongoose"),
+      dao             = require('./personnaDao'),
+      autoIncrement   = require( 'mongoose-auto-increment' );
     
 
 
@@ -17,6 +22,7 @@ const _connKey = Symbol();
 const _connInfoKey = Symbol();
 const _monConnKey = Symbol();
 const _dataModelsKey = Symbol();
+const _autoIncrementKey = Symbol();
 
 /**
  * This class represents the DB Connection
@@ -54,6 +60,9 @@ class PersonnaDb {
         if (error) throw new Error(error);
         console.log('---> Succesfully CREATED connection');
         $this[_connKey] = databaseConnection;
+        // Initialize auto increment
+        autoIncrement.initialize(databaseConnection);
+        $this[_autoIncrementKey] = autoIncrement;
         deferred.resolve($this);
       });
     }
@@ -66,6 +75,9 @@ class PersonnaDb {
    */
   openMongooseConnection() {
     mongoose.connect(connectionUrl); 
+    // set the identity plugin
+    autoIncrement.initialize(mongoose.connection);
+    this[_autoIncrementKey] = autoIncrement;
 
     // CONNECTION EVENTS
     // When successfully connected
@@ -90,33 +102,14 @@ class PersonnaDb {
         process.exit(0);
       });
     });
-    // require the models
-    // const BodySectionModel  = require('../models/data/bodySectionModel').BodySectionModel;
-    // const EquipmentModel    = require('../models/data/equipmentModel').EquipmentModel;
-    // const ExerciseTypeModel     = require('../models/data/exerciseTypeModel').ExerciseTypeModel;
-    // const ModifierModel    = require('../models/data/modifierModel').ModifierModel;
-    // const MuscleModel           = require('../models/data/muscleModel').MuscleModel;
-    // // Load dependencies
-    // let bsModel = new BodySectionModel();
-    // // BRING IN YOUR SCHEMAS & MODELS
-    // var dataModels = {
-    //   BodySection: bsModel,
-    //   Equipment: new EquipmentModel(),
-    //   ExerciseType: new ExerciseTypeModel(),
-    //   Modifier: new ModifierModel(),
-    //   MuscleModel: new MuscleModel(bsModel),
-    // }
-    // put it in a public key
-    //console.log(dao.PersonaDataModels.GetModels());
-    this[_dataModelsKey] = dao.PersonaDataModels.GetModels();
+    
+    this[_dataModelsKey] = dao.PersonaDataModels.GetModels(this[_autoIncrementKey]);
    // require('../models/data/bodySectionModel');
   }
 
   dataModels() {
     return this[_dataModelsKey];
   }
-
-  
 }
 
 module.exports.PersonnaDb = PersonnaDb;

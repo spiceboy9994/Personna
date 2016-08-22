@@ -1,21 +1,18 @@
+/************  Copyright ************/
+/* Year: 2016
+ * Author: David Espino
+*/
 "use strict"
 // Imports
 const Q                 = require('q'),
-      // ModifierModel    = require('../models/data/modifierModel').ModifierModel,
-      // ResultModel       = require('../models/result/resultModel').ResultModel,
-      mongoose          = require('mongoose'),
-      BaseService       = require('./baseService').BaseService,
-      strings           = require('../models/strings/crudStrings').CrudStrings;
-
-const _msInstance =  Symbol();
-
+      BaseService       = require('./baseService').BaseService;
 /**
  * Controls Modifiers DB operations agaisnt the DB
  */
-class ModifierService {
+class ModifierService extends BaseService {
 // TODO Best approach for classes using controllers and services
   constructor(db) {
-    this[_msInstance] =  db.dataModels().Modifier;
+    super(db.dataModels().Modifier);
   }
    /**
    * Adds an Modifier  to the DB
@@ -23,15 +20,15 @@ class ModifierService {
    */
   addModifier(modifier) {
     let deferred = Q.defer();
-    let modifierInstance = this[_msInstance];
+    let modifierInstance = super.modelInstance();
     let modifierModel = modifierInstance.getModel();
     modifierModel.Name = modifier.name;
     modifierModel.ModifierId = modifier.id;
     modifierModel.Description = modifier.description;
     modifierModel.save((err) => {
-      const successMessage = strings.Messages(modifierInstance.getSchemaName()).ADDED;
-      const errorMessage = strings.Messages(modifierInstance.getSchemaName()).COULD_NOT_SAVE;
-      BaseService.prepareResult(deferred, successMessage, modifierModel, errorMessage, err);
+      const successMessage = super.messages().ADDED;
+      const errorMessage = super.messages().COULD_NOT_SAVE;
+      ModifierService.prepareResult(deferred, successMessage, modifierModel, errorMessage, err);
     }); 
     return deferred.promise;
   }
@@ -42,34 +39,35 @@ class ModifierService {
    */
   getModifiers(query) {
     let deferred = Q.defer();
-    let modifierInstance = this[_msInstance];
+    let modifierInstance = super.modelInstance();
     let modifier = modifierInstance.getModelList();
     console.log(query);
     modifier.find(query, (err, modifiers) => {
       const successMessage = '';
       // console.log('--Find');
       // console.log(modifiers);
-      const errorMessage = strings.Messages(modifierInstance.getSchemaName()).COULD_NOT_GET;
-      BaseService.prepareResult(deferred, successMessage, modifiers, errorMessage, err);
+      const errorMessage = super.messages().COULD_NOT_GET;
+      ModifierService.prepareResult(deferred, successMessage, modifiers, errorMessage, err);
     });
     return deferred.promise;
   }
 
+  /**
+   * Generates multiple ids as a moongose valid array
+   * @param  {[type]} ids [description]
+   * @return {[type]}     [description]
+   */
   getByMultiplesIds(ids) {
-    let idArray = [];
-    ids.forEach((id) => {
-      idArray.push(mongoose.Types.ObjectId(id))
-    });
-
+    let idArray = ModifierService.idsToMongoose(ids);
     let query = {
       '_id': {
         $in: idArray
       }
     };
-
     return this.getModifiers(query); 
 
   }
+
 }
 
 module.exports.ModifierService = ModifierService;
