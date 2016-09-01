@@ -52,7 +52,6 @@ class BaseDataModel {
           case _relTypes.ONE_TO_FEW: 
           case _relTypes.ONE_TO_MANY:
           case _relTypes.ONE_TO_ONE_REF: {
-            console.log('child model ---> ' + rel.childModel.getModelSchema())
             modelSettings[rel.fieldName] = [{ type: objectId, ref: rel.childModel.getModelSchema() }];
             break;
           }

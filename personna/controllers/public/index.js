@@ -15,8 +15,7 @@ router.get('/', function(req, res, next) {
   var myModel =  new RoutineModel('david');
   myModel.setTitle('david');
   myModel.setUser('Espino');
-  throw new Error('dummy');
-  res.render('index', { title:  myModel.getTitle() + ' ' + myModel.getUser()  });
+  res.status(200).json({status: 'done'});
 });
 
 module.exports = router;
