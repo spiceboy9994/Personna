@@ -6,7 +6,7 @@ var modifier = require('./modifierController');
 var muscle = require('./muscleController');
 var exerciseEquipment = require('./exerciseEquipmentController');
 
-module.exports = (app) => {
+module.exports = (app, passport) => {
   // Load controllers.....or if you want to call them `Routes` that's fine, too.
   app.use('/bodySection', bodySection);
   app.use('/equipment', equipment);
