@@ -22,7 +22,7 @@ const _bsSchemaName = 'BodySection';
  */
 class BodySectionModel extends BaseDataModel {
   constructor() {
-    super(_bsSchema, _bsSchemaName);
+    super(_bsSchema, _bsSchemaName, true);
   }
 
   /**

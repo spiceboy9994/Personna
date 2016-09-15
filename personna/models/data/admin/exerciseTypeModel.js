@@ -23,7 +23,7 @@ const _bsSchemaName = 'ExerciseType';
  */
 class ExerciseTypeModel extends BaseDataModel {
   constructor() {
-    super(_bsSchema, _bsSchemaName);
+    super(_bsSchema, _bsSchemaName, true);
   }
 
   /**

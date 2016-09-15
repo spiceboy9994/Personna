@@ -6,6 +6,8 @@ const MuscleService  = require('./muscleService').MuscleService;
 const ExerciseTypeService  = require('./exerciseTypeService').ExerciseTypeService;
 const ExerciseService  = require('./exerciseService').ExerciseService;
 const ExerciseEquipmentService  = require('./exerciseEquipmentService').ExerciseEquipmentService;
+const MembershipTypeService = require('./membershipTypeService').MembershipTypeService;
+const UserService = require('./userService').UserService;
 
 module.exports = (dbConnection) => {
   return {
@@ -16,5 +18,7 @@ module.exports = (dbConnection) => {
     Muscle: new MuscleService(dbConnection),
     Exercise: new ExerciseService(dbConnection),
     ExerciseEquipment: new ExerciseEquipmentService(dbConnection),
+    MembershipType: new MembershipTypeService(dbConnection),
+    User: new UserService(dbConnection),
   }
 }

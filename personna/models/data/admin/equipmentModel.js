@@ -23,7 +23,7 @@ const _bsSchemaName = 'Equipment';
  */
 class EquipmentModel extends BaseDataModel {
   constructor() {
-    super(_bsSchema, _bsSchemaName);
+    super(_bsSchema, _bsSchemaName, true);
   }
 
   /**

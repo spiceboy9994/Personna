@@ -1,12 +1,17 @@
 <div>
-  <form action="/users/login" method="POST">
+  {{#if loginMessage}}
+  <p>
+    {{loginMessage}}
+  </p>
+  {{/if}}
+  <form action="/user/login" method="POST">
     <p>
-      <label>Email</label>
-      <input type="email">
+      <label>UserName</label>
+      <input name="username" id="username" type="text">
     </p>
     <p>
       <label>Password</label>
-      <input type="password">
+      <input name="password" id="password" type="password">
     </p>
     <p>
       <input type="submit">

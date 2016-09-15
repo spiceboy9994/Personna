@@ -12,7 +12,7 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var passport = require('passport');
 var providersConfig = require('./config/oauthProviders').OauthProviders;
-var facebookProvider = require('./config/facebook-passport').FacebookPassport;
+var passportConnector = require('./config/personaPassport').PersonaPassport;
 const rootPath = path.normalize(__dirname);
 
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
@@ -53,11 +53,19 @@ const services = require('./services/admin/include')(dbConnection);
 
 // // TODO Best approach for classes using controllers and services
 app.set('services', services);
+var session = require('express-session');
 
+//...
+
+
+app.use(session({ cookie: { maxAge: 60000 }, 
+                  secret: 'woot',
+                  resave: false, 
+                  saveUninitialized: false}));
 
 // set oauth providersConfig
 app.use(flash());
-const FB_OAUTH = new facebookProvider(providersConfig, passport);
+const FB_OAUTH = new passportConnector(providersConfig, passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
