@@ -34,7 +34,7 @@ class ExerciseEquipmentModel extends BaseDataModel {
       { childModel: exercise, type: relTypes.ONE_TO_ONE_REF, fieldName: 'Exercise' },
       { childModel: equipment, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'Equipments' },
     ];
-    super(_exSchema, _exSchemaName, relationships, _exIdentity, identity);
+    super(_exSchema, _exSchemaName, true, relationships, _exIdentity, identity);
   }
 
   /**
