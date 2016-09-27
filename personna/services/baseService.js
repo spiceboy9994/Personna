@@ -67,6 +67,11 @@ class BaseService {
     return idArray;
   }
 
+  /** transforms an id to mongoose id */
+  idToMongooseId(id) {
+    return  mongoose.Types.ObjectId(id);
+  }
+
   static queryById(id) {
     let query = { '_id':  mongoose.Types.ObjectId(id)  }; 
     return query;
@@ -78,6 +83,12 @@ class BaseService {
    */
   messages() {
     return strings.Messages(this[_modelName]);
+  }
+
+  /** Exposes unique messages */
+  uniqueMessages(field, value) 
+  {
+    return strings.Messages(this[_modelName], field, value);
   }
 
   /**

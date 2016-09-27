@@ -3,7 +3,8 @@
  * Author: David Espino
 */
 "use strict"
-const mongoose = require( 'mongoose' );
+const mongoose = require( 'mongoose' ),
+      uniqueValidator = require('mongoose-unique-validator');
 // const autoIncrement = require( 'mongoose-auto-increment' );
 // const _schemaKey = Symbol();
 const _schemaDefinition = Symbol();
@@ -24,16 +25,18 @@ const _relTypes = {
  * Base Data Model to construct mongoose schemas and models
  */
 class BaseDataModel {
-  constructor(modelSettings, modelName, relationships, autoIncrementField, autoIncrement) {
+  constructor(modelSettings, modelName, shouldCreateModel, relationships, autoIncrementField, autoIncrement, applyUniques) {
     // create simple models (catalog based)
-    if (arguments.length === 2) {
+    if (arguments.length === 3) {
       this[_schemaDefinition] = modelSettings;
       this[_schemaNameKey] = modelName;
       let baseSchema = new mongoose.Schema(modelSettings);
-      let model =  mongoose.model(modelName, baseSchema);
-      this[_modelListKey] = model;
+      if (shouldCreateModel) {
+        let model =  mongoose.model(modelName, baseSchema);
+        this[_modelListKey] = model;
+      }
       this[_modelSchemaKey] = baseSchema; 
-    } else if(arguments.length === 5) {
+    } else if(arguments.length > 3) {
       // create complex model including relationships and auto increment field
       this[_schemaDefinition] = modelSettings;
       this[_schemaNameKey] = modelName;
@@ -52,7 +55,6 @@ class BaseDataModel {
           case _relTypes.ONE_TO_FEW: 
           case _relTypes.ONE_TO_MANY:
           case _relTypes.ONE_TO_ONE_REF: {
-            console.log('child model ---> ' + rel.childModel.getModelSchema())
             modelSettings[rel.fieldName] = [{ type: objectId, ref: rel.childModel.getModelSchema() }];
             break;
           }
@@ -67,6 +69,10 @@ class BaseDataModel {
           startAt: 1,
           incrementBy: 1,
         });
+      }
+      // check if schema has unique constraints
+      if (applyUniques) {
+        baseSchema.plugin(uniqueValidator);
       }
       let model =  mongoose.model(modelName, baseSchema);
       this[_modelListKey] = model;
@@ -83,6 +89,13 @@ class BaseDataModel {
     let model = this[_modelListKey];
     this[_modelKey] = new model();
     return this[_modelKey];
+  }
+
+  /**
+   * Returns the mongoose schema definition
+   */
+  getSchemaDefinition() {
+    return this[_modelSchemaKey];
   }
 
   /**

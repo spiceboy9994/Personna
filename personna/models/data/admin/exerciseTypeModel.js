@@ -4,7 +4,7 @@
 */
 "use strict"
 // Imports
-const BaseDataModel = require('./baseDataModel').BaseDataModel;
+const BaseDataModel = require('../baseDataModel').BaseDataModel;
 
 // Symbol keys
 const _bsSchemaKey = Symbol();
@@ -23,7 +23,7 @@ const _bsSchemaName = 'ExerciseType';
  */
 class ExerciseTypeModel extends BaseDataModel {
   constructor() {
-    super(_bsSchema, _bsSchemaName);
+    super(_bsSchema, _bsSchemaName, true);
   }
 
   /**

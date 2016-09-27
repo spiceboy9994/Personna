@@ -3,29 +3,17 @@
  * Author: David Espino
 */
 var express = require('express');
+const exphbs = require('express-handlebars');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// var controllers
-var index = require('./controllers/index');
-var users = require('./controllers/users');
-var bodySection = require('./controllers/bodySectionController');
-var equipment = require('./controllers/equipmentController');
-var exerciseType = require('./controllers/exerciseTypeController');
-var exercise = require('./controllers/exerciseController');
-var modifier = require('./controllers/modifierController');
-var muscle = require('./controllers/muscleController');
-var exerciseEquipment = require('./controllers/exerciseEquipmentController');
-// Services
-const BodySectionService  = require('./services/bodySectionService').BodySectionService;
-const EquipmentService  = require('./services/equipmentService').EquipmentService;
-const ModifierService  = require('./services/modifierService').ModifierService;
-const MuscleService  = require('./services/muscleService').MuscleService;
-const ExerciseTypeService  = require('./services/exerciseTypeService').ExerciseTypeService;
-const ExerciseService  = require('./services/exerciseService').ExerciseService;
-const ExerciseEquipmentService  = require('./services/exerciseEquipmentService').ExerciseEquipmentService;
+var flash = require('connect-flash');
+var passport = require('passport');
+var providersConfig = require('./config/oauthProviders').OauthProviders;
+var passportConnector = require('./config/personaPassport').PersonaPassport;
+const rootPath = path.normalize(__dirname);
 
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
@@ -35,10 +23,19 @@ var app = express();
 var personnaLogger = new PersonnaLogger();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// view engine setup
+console.log(rootPath);
+
+app.engine('.html', exphbs({
+  layoutsDir: rootPath + '/views/layouts/',
+  extname: '.html',
+  defaultLayout: 'public',
+  partialsDir: [rootPath + '/views/partials/'],
+}));
+app.set('views', rootPath + '/views/');
+app.set('view engine', '.html');
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -47,36 +44,37 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Open DB Connection
 dbConnection.openMongooseConnection();
 
-
 app.set('dbAccess', dbConnection); 
 app.set('customLogger', personnaLogger);
-//bodySection.configure(dbConnection);
-// TODO Best approach for classes using controllers and services
-const services = {
-  Modifier: new ModifierService(dbConnection),
-  BodySection: new BodySectionService(dbConnection),
-  Equipment: new EquipmentService(dbConnection),
-  ExerciseType: new ExerciseTypeService(dbConnection),
-  Muscle: new MuscleService(dbConnection),
-  Exercise: new ExerciseService(dbConnection),
-  ExerciseEquipment: new ExerciseEquipmentService(dbConnection),
-}
 
 console.log(dbConnection);
+// get the services
+const services = require('./services/admin/include')(dbConnection);
+
 // // TODO Best approach for classes using controllers and services
 app.set('services', services);
+var session = require('express-session');
+
+//...
 
 
+app.use(session({ cookie: { maxAge: 60000 }, 
+                  secret: 'woot',
+                  resave: false, 
+                  saveUninitialized: false}));
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/bodySection', bodySection);
-app.use('/equipment', equipment);
-app.use('/modifier', modifier);
-app.use('/exercisetype', exerciseType);
-app.use('/muscle', muscle);
-app.use('/exercise', exercise);
-app.use('/exercise-equipment', exerciseEquipment);
+// set oauth providersConfig
+app.use(flash());
+const FB_OAUTH = new passportConnector(providersConfig, passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.set('authPassport', passport);
+
+// add controller routes
+require('./controllers/admin/routes')(app, passport);
+require('./controllers/public/routes')(app, passport);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -94,6 +92,8 @@ if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
      console.log('Error 1');
     res.status(err.status || 500);
+    personnaLogger.logError(err);
+    console.log(err);
     // const perLogger = req.app.locals.personaLogger;
     // perLogger.logError(err);
     if (res.headersSent) {
@@ -106,15 +106,13 @@ if (app.get('env') === 'development') {
   });
 }
 
-
-
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
    console.log('Error 2'); 
   res.status(err.status || 500);
-  const perLogger = req.app.locals.personaLogger;
-  perLogger.logError(err);
+   personnaLogger.logError(err);
+    console.log(err);
   if (res.headersSent) {
     return next(err);
   }

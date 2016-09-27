@@ -4,7 +4,7 @@
 */
 "use strict"
 // Imports
-const BaseDataModel = require('./baseDataModel').BaseDataModel;
+const BaseDataModel = require('../baseDataModel').BaseDataModel;
 
 // Symbol keys
 const _exIdentity = "ExerciseId"; 
@@ -32,7 +32,7 @@ class ExerciseModel extends BaseDataModel {
       { childModel: exerciseType, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'ExerciseTypes' },
       { childModel: muscle, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'Muscles' },
     ];
-    super(_exSchema, _exSchemaName, relationships, _exIdentity, identity);
+    super(_exSchema, _exSchemaName, true, relationships, _exIdentity, identity);
   }
 
   /**

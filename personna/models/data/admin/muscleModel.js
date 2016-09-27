@@ -4,7 +4,7 @@
 */
 "use strict"
 // Imports
-const BaseDataModel = require('./baseDataModel').BaseDataModel;
+const BaseDataModel = require('../baseDataModel').BaseDataModel;
 // const BodySectionModel = require('./bodySectionModel').BaseDataModel;
 // const ModifierModel = require('./modifierModel').ModifierModel;
 
@@ -39,7 +39,7 @@ class MuscleModel extends BaseDataModel {
       { childModel: bodySection, type: relTypes.ONE_TO_ONE, fieldName: 'BodySection' },
       { childModel: modifier, type: relTypes.ONE_TO_FEW_INLINE, fieldName: 'Modifiers' },
     ];
-    super(_mSchema, _mSchemaName, relationships, _mIdentity, identityBuilder);
+    super(_mSchema, _mSchemaName, true, relationships, _mIdentity, identityBuilder);
   }
 
   /**

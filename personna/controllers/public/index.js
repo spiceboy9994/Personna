@@ -3,7 +3,7 @@
  * Author: David Espino
 */
 var express = require('express');
-var RoutineModel = require('../models/routineModel').RoutineModel;
+var RoutineModel = require('../../models/routineModel').RoutineModel;
 
 //import { TrackableModel } from './trackableModel';
 var router = express.Router();
@@ -15,8 +15,7 @@ router.get('/', function(req, res, next) {
   var myModel =  new RoutineModel('david');
   myModel.setTitle('david');
   myModel.setUser('Espino');
-  throw new Error('dummy');
-  res.render('index', { title:  myModel.getTitle() + ' ' + myModel.getUser()  });
+  res.status(200).json({status: 'done'});
 });
 
 module.exports = router;
