@@ -24,7 +24,9 @@ router.post('/', function(req, res, next) {
     canHaveTracking: body.canHaveTracking,
     canHaveSocial: body.canHaveSocial,
     canAlterRoutines: body.canAlterRoutines,
+    canQueryCatalogs: body.canQueryCatalogs,
     isPurchasable: body.isPurchasable,
+    isAdmin: body.isAdmin || false,
     isActive: true,
   };
   var result = mTypeProxy.addMembershipType(mType).then((result) => {

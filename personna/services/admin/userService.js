@@ -19,6 +19,7 @@ const userPopulateFilter = [
             FirstName: 1,
             LastName: 1,
             IsActive: 1,
+            IsAdmin: 1, 
             Password: 1,
             FacebookId: 1, 
             FacebookToken: 1,
@@ -117,24 +118,6 @@ class UserService extends BaseService {
     var successMessage = '';
     var errorMessage = loginStrings.Messages(user.userName).USER_NOT_FOUND;
     let accessDeniedError = new Error('User not Found');
-    // let populateFilter = [
-    //      { "$match": { UserName : user.userName } },
-    //      { "$project": {
-    //         _id: 1,
-    //         UserName: 1,
-    //         Email: 1,
-    //         UserId: 1,
-    //         FirstName: 1,
-    //         LastName: 1,
-    //         IsActive: 1,
-    //         Password: 1,
-    //         FacebookId: 1, 
-    //         FacebookToken: 1,
-    //         UserMemberShips: 1,
-    //      }},
-    //      { $unwind: '$UserMemberShips' },
-    //      { $lookup: {from: 'membershiptypes', localField: 'UserMemberShips.MembershipType', foreignField: '_id', as: 'MembershipData'} },
-    //   ];
     let populateFilter = userPopulateFilter.slice(0);
     populateFilter.push({ "$match": { UserName : user.userName } });
     uModels.aggregate(populateFilter, (err, users) => {
@@ -182,7 +165,6 @@ class UserService extends BaseService {
           return callback(err, hash);
         });
       }
-
     });
   };
 

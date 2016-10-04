@@ -24,7 +24,7 @@ class PersonaPassport {
             userName: user.UserName,
             firstName: user.FirstName,
             lastName: user.LastName,
-             memberships: [],
+            memberships: [],
         };
         if (user.UserMemberShips) {
             // console.log('--> member data');
@@ -41,6 +41,9 @@ class PersonaPassport {
                 canAddExercises: memberData.CanAddExercises,
                 canHaveTracking: memberData.CanHaveTracking,
                 canHaveSocial: memberData.CanHaveSocial,
+                canQueryCatalogs: memberData.CanQueryCatalogs,
+                canAlterUsers: memberData.CanAlterUsers,
+                isAdmin: memberData.IsAdmin,
             });
         }
         done(null, serializableUser);

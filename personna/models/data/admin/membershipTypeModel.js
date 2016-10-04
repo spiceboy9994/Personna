@@ -18,8 +18,11 @@ const _mtSchema = {
   CanHaveTracking: {type: Boolean},
   CanHaveSocial: {type: Boolean},
   CanAlterRoutines: {type: Boolean},
+  CanQueryCatalogs: {type: Boolean},
+  CanAlterUsers: {type: Boolean},
   IsPurchasable: {type: Boolean},
   IsActive: {type: Boolean},
+  IsAdmin: {type: Boolean},
 };
 
 const _mtSchemaName = 'MembershipType';
