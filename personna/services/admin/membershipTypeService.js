@@ -74,8 +74,11 @@ class MembershipTypeService extends BaseService {
     mTypeModel.CanHaveTracking = mType.canHaveTracking;
     mTypeModel.CanHaveSocial = mType.canHaveSocial;
     mTypeModel.CanAlterRoutines = mType.canAlterRoutines;
+    mTypeModel.CanQueryCatalogs = mType.canQueryCatalogs;
+    mTypeModel.CanAlterUsers = mType.canAlterUsers;
     mTypeModel.IsPurchasable = mType.isPurchasable;
     mTypeModel.IsActive = mType.isActive;
+    mTypeModel.IsAdmin = mType.isAdmin || false;
     mTypeModel.save((err) => {
       const successMessage = super.messages().ADDED;
       const errorMessage = super.messages().COULD_NOT_SAVE;
