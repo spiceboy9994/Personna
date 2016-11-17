@@ -13,7 +13,10 @@ var flash = require('connect-flash');
 var passport = require('passport');
 var providersConfig = require('./config/oauthProviders').OauthProviders;
 var passportConnector = require('./config/personaPassport').PersonaPassport;
+var googleConnector = require('./config/googleDriveAuth').GoogleAuthenticator;
+// get the root path
 const rootPath = path.normalize(__dirname);
+// global.rootPath = rootPath;
 
 const PersonnaDb = require('./dao/personnaDb').PersonnaDb;
 const dbConnection = new PersonnaDb();
@@ -24,7 +27,7 @@ var personnaLogger = new PersonnaLogger();
 
 // view engine setup
 // view engine setup
-console.log(rootPath);
+// console.log(global.rootPath);
 
 app.engine('.html', exphbs({
   layoutsDir: rootPath + '/views/layouts/',
@@ -46,6 +49,9 @@ dbConnection.openMongooseConnection();
 
 app.set('dbAccess', dbConnection); 
 app.set('customLogger', personnaLogger);
+
+// open google Connection
+googleConnector = new googleConnector(rootPath);
 
 console.log(dbConnection);
 // get the services
@@ -71,6 +77,7 @@ app.use(passport.session());
 
 
 app.set('authPassport', passport);
+app.set('googleAuth', googleConnector);
 
 // add controller routes
 require('./controllers/admin/routes')(app, passport);

@@ -15,7 +15,7 @@ class OauthProviders {
     }
   }
 
-  static getTwitter() {
+  static getGoogle() {
     return {
       clientId: process.env.PERSONA_GO_CLIENTID,
       clientSecret: process.env.PERSONA_GO_CLIENT_SECRET,
@@ -23,7 +23,7 @@ class OauthProviders {
     }
   }
 
-  static getGoogle() {
+  static getTwitter() {
     return {
       clientId: process.env.PERSONA_TW_CLIENTID,
       clientSecret: process.env.PERSONA_TW_CLIENT_SECRET,
